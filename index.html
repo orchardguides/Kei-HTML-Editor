@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<!--Copyright (c) 2020 by Kei G. Gauthier, Longmeadow, MA, USA
+*
+* This software is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
+*
+* You should have received a copy of the license along with this
+* work.  If not, see <http://creativecommons.org/licenses/by-nc-sa/3.0/>.-->
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+			integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2"
+			crossorigin="anonymous">
+
+<style>
+	 .nav {
+		cursor:default;
+	}
+
+	.dropdown-menu {
+		margin-top: -8px;
+		padding:0px;
+	}
+	.dropdown:hover>.dropdown-menu {
+		display: block;
+	}
+	.dropdown-submenu {
+		position: relative;
+		width:auto;
+	}
+	.dropdown-submenu>.dropdown-menu {
+		border-radius: 0px;
+		left: 100%;
+		margin-left: -20px;
+		margin-top: -10px;
+		padding:0px;
+		top: 0;
+	}
+	.dropdown-submenu:hover>.dropdown-menu {
+		display: block;
+	}
+
+	.modal-backdrop {
+		background-color: transparent;
+	}
+	.modal-header {
+		cursor: move;
+	}
+
+	.color-table {
+		margin-left:auto;
+		margin-right:auto;
+	}
+	.color-option {
+		border:1px solid #000000;
+		cursor:pointer;
+		height: 20px;
+		float: left;
+		width: 20px;
+	}
+
+	#keieditable {
+		border:solid 3px #d3d3d3;
+		margin-left:1%;
+		margin-right:1%;
+		margin-top:70px;
+		min-height:20rem;
+		padding:10px;
+		width: auto;
+	}
+	#keieditable table {
+		border-color:#000000;
+		border-collapse:separate;
+		border-style:solid;
+		border-width:1px;
+		margin-left:auto;
+		margin-right:auto;
+		width:auto;
+	}
+	#keieditable td {
+		border-color:#a9a9a9;
+		border-style:dotted;
+		border-width:1px;
+		color:inherit;
+		padding:5px;
+	}
+</style>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+			integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+			crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+			integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+			crossorigin="anonymous"></script>
+
+<script src='./javascript/Edit.js'></script>
+<script src='./javascript/FindReplace.js'></script>
+<script src='./javascript/Menus.js'></script>
+<script src='./javascript/Style.js'></script>
+<script src='./javascript/Table.js'></script>
+<script src='./javascript/TextBlock.js'></script>
+<script src='./javascript/typo/typo.js'></script>
+
+</head>
+
+<body>
+	<nav class="navbar navbar-dark bg-dark fixed-top navbar-expand-sm" role="navigation">
+		<div class="navbar-brand"><span class="text-primary"><b>Kei HTML Editor</b></span></div>
+		<div class="collapse navbar-collapse">
+			<ul class="nav navbar-nav">
+				<li class="dropdown">
+					<div class="nav-link active">Edit</div>
+					<ul class="dropdown-menu multi-level">
+						<li class="dropdown-item" onclick="Menus.execCommand('cut')">Cut</li>
+						<li class="dropdown-item" onclick="Menus.execCommand('copy')">Copy</li>
+						<li class="dropdown-item" onclick="Menus.execCommand('undo')">Undo</li>
+						<li class="dropdown-item" onclick="Menus.execCommand('redo')">Redo</li>
+					</ul>
+				</li>
+				<li class="dropdown">
+					<div class="nav-link active">Text</div>
+					<ul class="dropdown-menu multi-level" id="text_menu">
+						<li class="dropdown-item" onclick="Menus.showTextColorChooser('Font Color', 'forecolor')">Font Color</li>
+						<li class="dropdown-item " onclick="Menus.showTextColorChooser('Highlight Color', 'hilitecolor')">Highlight Color</li>
+						<script>
+							Menus.fontNameTextList(document.getElementById("text_menu"));
+							Menus.fontSizeTextList(document.getElementById("text_menu"));
+						</script>
+						<li class="dropdown-item" onclick="Menus.execCommand('bold')">Bold</li>
+						<li class="dropdown-item" onclick="Menus.execCommand('italic')">Italic</li>
+						<li class="dropdown-item" onclick="Menus.execCommand('underline')">Underline</li>
+						<li class="dropdown-item" onclick="Menus.execCommand('strikethrough')">Strikethrough</li>
+						<li class="dropdown-item" onclick="Menus.execCommand('subscript')">Subscript</li>
+						<li class="dropdown-item" onclick="Menus.execCommand('superscript')">Superscript</li>
+						<li class="dropdown-item" onclick="Menus.execCommand('removeformat')">Clear Formatting</li>
+					</ul>
+				</li>
+				<li class="dropdown">
+					<div class="nav-link active">Paragraph</div>
+					<ul class="dropdown-menu multi-level">
+						<li class="dropdown-item" onclick="Menus.execCommand('justifyleft')">Left</li>
+						<li class="dropdown-item" onclick="Menus.execCommand('justifyright')">RIght</li>
+						<li class="dropdown-item" onclick="Menus.execCommand('justifycenter')">Center</li>
+						<li class="dropdown-item" onclick="Menus.execCommand('justifyfull')">Justify</li>
+					</ul>
+				</li>
+				<li class="dropdown">
+					<div class="nav-link active">Table</div>
+					<ul class="dropdown-menu multi-level" id="table_menu">
+						<li class="dropdown-item" onclick="Menus.showTableInsert()">Insert Table</li>
+						<li class="dropdown-item disabled table-dependent-item" onclick="Menus.tableSplit()">Split Table</li>
+						<li class="dropdown-submenu">
+							<div class="dropdown-item disabled table-dependent-dropdown">Format  &rarr;</div>
+							<ul class="dropdown-menu invisible table-dependent-menu" id="table_format_menu">
+								<script>
+								Menus.tableInsertElementList(document.getElementById("table_format_menu"));
+								Menus.tableDeleteList(document.getElementById("table_format_menu"));
+									Menus.tableJustifyList(document.getElementById("table_format_menu"));
+								</script>
+								<li class="dropdown-item" onclick="Menus.showColorChooser('Background Color', 'table', 'backgroundColor')">Background Color</li>
+								<li class="dropdown-item" onclick="Menus.showColorChooser('Font Color', 'table', 'color')">Font Color</li>
+								<script>
+									Menus.fontFamilyList(document.getElementById("table_format_menu"), "table");
+									Menus.fontSizeList(document.getElementById("table_format_menu"), "table");
+									Menus.textAlingList(document.getElementById("table_format_menu"), "table");
+								</script>
+							</ul>
+						</li>
+						<li class="dropdown-submenu">
+							<div class="dropdown-item disabled table-dependent-dropdown">Borders  &rarr;</div>
+							<ul class="dropdown-menu invisible table-dependent-menu" id="table_border_menu">
+								<li class="dropdown-item" onclick="Menus.showSelectChooser('table', 'borderSpacing', 'Cell Spacing', 'Pixels', 0, 15, 1, 0, 'px')">Cell Spacing</li>
+								<script>
+									Menus.borderCollapseList(document.getElementById("table_border_menu"), "table");
+								</script>
+								<li class="dropdown-item" onclick="Menus.showColorChooser('Border Color', 'table', 'borderColor')">Color</li>
+								<li class="dropdown-item" onclick="Menus.showSelectChooser('table', 'borderRadius', 'Border Radius', 'Pixels', 0, 15, 1, 0, 'px')">Radius</li>
+								<script>
+									Menus.borderStyleList(document.getElementById("table_border_menu"), "table");
+								</script>
+								<li class="dropdown-item" onclick="Menus.showSelectChooser('table', 'borderWidth', 'Border Width', 'Pixels', 0, 15, 1, 0, 'px')">Width</li>
+							</ul>
+						</li>
+						<li class="dropdown-submenu">
+							<div class="dropdown-item disabled table-dependent-dropdown">Cells  &rarr;</div>
+							<ul class="dropdown-menu invisible table-dependent-menu" id="table_cells_menu">
+								<li class="dropdown-item" onclick="Menus.showColorChooser('Background Color', 'table', 'backgroundColor', 'td')">Background Color</li>
+								<li class="dropdown-item" onclick="Menus.showColorChooser('Font Color', 'table', 'color', 'td')">Font Color</li>
+								<script>
+									Menus.fontFamilyList(document.getElementById("table_cells_menu"), "table", "td");
+									Menus.fontSizeList(document.getElementById("table_cells_menu"), "table", "td");
+									Menus.textAlingList(document.getElementById("table_cells_menu"), "table", "td");
+									Menus.verticalAlingList(document.getElementById("table_cells_menu"), "table", "td");
+								</script>
+								<li class="dropdown-submenu">
+									<div class="dropdown-item">Borders  &rarr;</div>
+									<ul class="dropdown-menu" id="table_cells_border_menu">
+										<li class="dropdown-item" onclick="Menus.showColorChooser('Border Color', 'table, 'borderColor'', 'td')">Color</li>
+										<li class="dropdown-item" onclick="Menus.showSelectChooser('table', 'borderRadius', 'Border Radius', 'Pixels', 0, 15, 1, 0, 'px', 'td')">Radius</li>
+										<script>
+											Menus.borderStyleList(document.getElementById("table_cells_border_menu"), "table", "td");
+										</script>
+										<li class="dropdown-item" onclick="Menus.showSelectChooser('table', 'borderWidth', 'Border Width', 'Pixels', 0, 15, 1, 0, 'px', 'td')">Width</li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+				<li class="dropdown">
+					<div class="nav-link disabled table-dependent-nav-item">Column</div>
+					<ul class="dropdown-menu multi-level invisible table-dependent-menu" id="col_menu">
+						<li class="dropdown-item" onclick="Menus.showSelectChooser('col', 'width', 'Width', 'Pixels', 2, 40, 2, 2, 'cm', 'td')">Width</li>
+						<li class="dropdown-submenu">
+							<div class="dropdown-item">Cells  &rarr;</div>
+							<ul class="dropdown-menu" id="col_cells_menu">
+								<li class="dropdown-item" onclick="Menus.showColorChooser('Background Color', 'col', 'backgroundColor', 'td')">Background Color</li>
+								<li class="dropdown-item" onclick="Menus.showColorChooser('Font Color', 'col', 'color', 'td')">Font Color</li>
+								<script>
+									Menus.fontFamilyList(document.getElementById("col_cells_menu"), "col", "td");
+									Menus.fontSizeList(document.getElementById("col_cells_menu"), "col", "td");
+									Menus.textAlingList(document.getElementById("col_cells_menu"), "col", "td");
+									Menus.verticalAlingList(document.getElementById("col_cells_menu"), "col", "td");
+								</script>
+								<li class="dropdown-submenu">
+									<div class="dropdown-item">Borders  &rarr;</div>
+									<ul class="dropdown-menu" id="col_border_menu">
+										<li class="dropdown-item" onclick="Menus.showColorChooser('Border Color', 'col', 'borderColor', 'td')">Color</li>
+										<li class="dropdown-item" onclick="Menus.showSelectChooser('col', 'borderRadius', 'Border Radius', 'Pixels', 0, 15, 1, 0, 'px', 'td')">Radius</li>
+										<script>
+											Menus.borderStyleList(document.getElementById("col_border_menu"), "col", "td");
+										</script>
+										<li class="dropdown-item" onclick="Menus.showSelectChooser('col', 'borderWidth', 'Border Width', 'Pixels', 0, 15, 1, 0, 'px', 'td')">Width</li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+				<li class="dropdown">
+					<div class="nav-link disabled table-dependent-nav-item">Row</div>
+					<ul class="dropdown-menu multi-level invisible table-dependent-menu" id="tr_menu">
+						<li class="dropdown-item" onclick="Menus.showColorChooser('Background Color', 'tr', 'backgroundColor')">Background Color</li>
+						<li class="dropdown-item" onclick="Menus.showColorChooser('Font Color', 'tr', 'color')">Font Color</li>
+						<script>
+							Menus.fontFamilyList(document.getElementById("tr_menu"), "tr");
+							Menus.fontSizeList(document.getElementById("tr_menu"), "tr");
+							Menus.textAlingList(document.getElementById("tr_menu"), "tr");
+							Menus.verticalAlingList(document.getElementById("tr_menu"), "tr");
+						</script>
+						<li class="dropdown-submenu">
+							<div class="dropdown-item">Cells  &rarr;</div>
+							<ul class="dropdown-menu" id="tr_cells_menu">
+								<li class="dropdown-item" onclick="Menus.showColorChooser('Background Color', 'tr', 'backgroundColor', 'td')">Background Color</li>
+								<li class="dropdown-item" onclick="Menus.showColorChooser('Font Color', 'tr', 'color', 'td')">Font Color</li>
+								<script>
+									Menus.fontFamilyList(document.getElementById("tr_cells_menu"), "tr", "td");
+									Menus.fontSizeList(document.getElementById("tr_cells_menu"), "tr", "td");
+									Menus.textAlingList(document.getElementById("tr_cells_menu"), "tr", "td");
+									Menus.verticalAlingList(document.getElementById("tr_cells_menu"), "tr", "td");
+								</script>
+								<li class="dropdown-submenu">
+									<div class="dropdown-item">Borders  &rarr;</div>
+									<ul class="dropdown-menu" id="tr_cells_border_menu">
+										<li class="dropdown-item" onclick="Menus.showColorChooser('Border Color', 'tr', 'borderColor', 'td')">Color</li>
+										<li class="dropdown-item" onclick="Menus.showSelectChooser('tr', 'borderRadius', 'Border Radius', 'Pixels', 0, 15, 1, 0, 'px', 'td')">Radius</li>
+										<script>
+											Menus.borderStyleList(document.getElementById("tr_cells_border_menu"), "tr", "td");
+										</script>
+										<li class="dropdown-item" onclick="Menus.showSelectChooser('tr', 'borderWidth', 'Border Width', 'Pixels', 0, 15, 1, 0, 'px', 'td')">Width</li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+				<li class="dropdown">
+					<div class="nav-link disabled table-dependent-nav-item">Cell</div>
+					<ul class="dropdown-menu multi-level invisible table-dependent-menu" id="td_menu">
+						<li class="dropdown-submenu">
+							<div class="dropdown-item">Span  &rarr;</div>
+							<ul class="dropdown-menu">
+								<li class="dropdown-item" onclick="Menus.showCellSpanChooser('Row Span', 'row')">Row Span</li>
+								<li class="dropdown-item" onclick="Menus.showCellSpanChooser('Column Span', 'col')">Column Span</li>
+							</ul>
+						</li>
+						<li class="dropdown-item" onclick="Menus.showColorChooser('Background Color', 'td', 'backgroundColor')">Background Color</li>
+						<li class="dropdown-item" onclick="Menus.showColorChooser('Font Color', 'td', 'color')">Font Color</li>
+						<script>
+							Menus.fontFamilyList(document.getElementById("td_menu"), "td");
+							Menus.fontSizeList(document.getElementById("td_menu"), "td");
+							Menus.textAlingList(document.getElementById("td_menu"), "td");
+							Menus.verticalAlingList(document.getElementById("td_menu"), "td");
+						</script>
+						<li class="dropdown-submenu">
+							<div class="dropdown-item">Borders  &rarr;</div>
+							<ul class="dropdown-menu" id="td_border_menu">
+								<li class="dropdown-item" onclick="Menus.showColorChooser('Border Color', 'td', 'borderColor')">Color</li>
+								<li class="dropdown-item" onclick="Menus.showSelectChooser('td', 'borderRadius', 'Border Radius', 'Pixels', 0, 15, 1, 0, 'px')">Radius</li>
+								<script>
+									Menus.borderStyleList(document.getElementById("td_border_menu"), "td");
+								</script>
+								<li class="dropdown-item" onclick="Menus.showSelectChooser('td', 'borderWidth', 'Border Width', 'Pixels', 0, 15, 1, 0, 'px')">Width</li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</nav>
+
+	<div id="keieditable" contenteditable="true" onmouseout="Menus.makeMenuReady()"></div>
+
+	<div class="modal fade" id="mutableModal" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog modal-sm" role="document">
+			<div class="modal-content bg-light">
+				<div class="modal-header"><h5 class="modal-title" id="mutableModalTitle"></h5></div>
+				<div class="modal-body" id="mutableModalBody"></div>
+				<div class="modal-footer" id="mutableModalFooter"></div>
+			</div>
+		</div>
+	</div>
+</body>
