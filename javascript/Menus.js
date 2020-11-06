@@ -63,7 +63,7 @@ class Menus {
 	static execCommand(action, value) {
 		Edit.selectRange(selection);
 		Edit.execCommand(action, value);
-		Menus.markSelection();
+		Edit.selectRange(selection);
 	}
 	static elementStyle(tag, style, value, childGroupTag) {
 		Edit.selectRange(selection);
@@ -97,10 +97,13 @@ class Menus {
 	}
 
 //  Static function to format editing commands for use as onclick functions
-	static onclickStyleCommand(tag, style, childGroupTag) {
-		if (childGroupTag) return "Menus.elementStyle('" + tag + "', '" + style +  "',  '*chosenOption*', '" + childGroupTag + "');";
-		if (tag) return "Menus.elementStyle('" + tag + "', '" + style +  "',  '*chosenOption*');"
-		return  "Menus.execCommand('" + style + "',  '*chosenOption*');"
+	static constantOnclickStyle(tag, style, value, childGroupTag) {
+		if (childGroupTag) return "Menus.elementStyle('" + tag + "', '" + style +  "',  " + value + ", '" + childGroupTag + "');";
+		if (tag) return "Menus.elementStyle('" + tag + "', '" + style +  "', " +  value + ");"
+		return  "Menus.execCommand('" + style + "',  " + value + ");"
+	}
+	static variableOnclickStyle(tag, style, childGroupTag) {
+		return Menus.constantOnclickStyle(tag, style, "'*chosenOption*'", childGroupTag);
 	}
 
 //  Static Functions to format and display Pick Lists in Bootstrap Menus
@@ -145,7 +148,7 @@ class Menus {
 	static fontNameTextList(parent) {
 		let title = "Font Family";
 		let descriptions = Menus.fontNames();
-		let onclickCommand = Menus.onclickStyleCommand(null, "fontName");
+		let onclickCommand = Menus.variableOnclickStyle(null, "fontName");
 		let commandOptions = descriptions;
 		let listItemStyle = "fontFamily";
 		let listItemStyleValues = descriptions;
@@ -154,7 +157,7 @@ class Menus {
 	static fontFamilyList(parent, tag, childGroupTag) {
 		let title = "Font Family";
 		let descriptions = Menus.fontNames();
-		let onclickCommand = Menus.onclickStyleCommand(tag, "fontFamily", childGroupTag);
+		let onclickCommand = Menus.variableOnclickStyle(tag, "fontFamily", childGroupTag);
 		let commandOptions = descriptions;
 		let listItemStyle = "fontFamily";
 		let listItemStyleValues = descriptions;
@@ -167,7 +170,7 @@ class Menus {
 	static fontSizeTextList(parent) {
 		let title = "Font Size";
 		let descriptions = Menus.fontSizes();
-		let onclickCommand = Menus.onclickStyleCommand(null, "fontSize");
+		let onclickCommand = Menus.variableOnclickStyle(null, "fontSize");
 		let commandOptions  = [1, 2, 3, 4, 5, 6, 7];
 		let listItemStyle = "fontSize";
 		let listItemStyleValues = descriptions;
@@ -176,7 +179,7 @@ class Menus {
 	static fontSizeList(parent, tag, childGroupTag) {
 		let title = "Font Size";
 		let descriptions = Menus.fontSizes();
-		let onclickCommand = Menus.onclickStyleCommand(tag, "fontSize", childGroupTag);
+		let onclickCommand = Menus.variableOnclickStyle(tag, "fontSize", childGroupTag);
 		let commandOptions = descriptions;
 		let listItemStyle = "fontSize";
 		let listItemStyleValues = descriptions;
@@ -186,21 +189,21 @@ class Menus {
 	static borderCollapseList(parent, tag, childGroupTag) {
 		let title = "Collapse";
 		let descriptions = ["Collapse", "Separate"];
-		let onclickCommand = Menus.onclickStyleCommand(tag, "borderCollapse", childGroupTag);
+		let onclickCommand = Menus.variableOnclickStyle(tag, "borderCollapse", childGroupTag);
 		let commandOptions = ["collapse", "separate"];
 		Menus.pickList(parent, title, descriptions, onclickCommand, commandOptions);
 	}
 	static borderStyleList(parent, tag, childGroupTag) {
 		let title = "Style";
 		let descriptions = ["Solid", "Dotted", "Dashed", "None", "Hidden"];
-		let onclickCommand = Menus.onclickStyleCommand(tag, "borderStyle", childGroupTag);
+		let onclickCommand = Menus.variableOnclickStyle(tag, "borderStyle", childGroupTag);
 		let commandOptions = ["solid", "dotted", "dashed", "none", "hidden"];
 		Menus.pickList(parent, title, descriptions, onclickCommand, commandOptions);
 	}
 	static textAlingList(parent, tag, childGroupTag) {
 		let title = "Text Alignment";
 		let descriptions = ["Left", "Center", "Right"];
-		let onclickCommand = Menus.onclickStyleCommand(tag, "textAlign", childGroupTag);
+		let onclickCommand = Menus.variableOnclickStyle(tag, "textAlign", childGroupTag);
 		let commandOptions = ["left", "center", "right"];
 		Menus.pickList(parent, title, descriptions, onclickCommand, commandOptions);
 	}
@@ -230,7 +233,7 @@ class Menus {
 	static verticalAlingList(parent, tag, childGroupTag) {
 		let title = "Vertical Alignment";
 		let descriptions = ["Top", "Middle", "Bottom"];
-		let onclickCommand = Menus.onclickStyleCommand(tag, "verticalAlign", childGroupTag);
+		let onclickCommand = Menus.variableOnclickStyle(tag, "verticalAlign", childGroupTag);
 		let commandOptions = ["top", "middle", "bottom"];
 		Menus.pickList(parent, title, descriptions, onclickCommand, commandOptions);
 	}
@@ -267,7 +270,12 @@ class Menus {
 		return div;
 	}
 
-	static attachColorPalette(parent, tag, style, childGroupTag) {
+	static showTextColorChooser(title, style) {
+		Menus.showColorChooser(title, null, style);
+	}
+	static showColorChooser(title, tag, style, childGroupTag) {
+		document.getElementById('mutableModalTitle').innerHTML = title;
+
 		let colors = ["#000000", "#191919", "#323232", "#4b4b4b", "#646464", "#7d7d7d", "#969696", "#afafaf", "#c8c8c8", "#e1e1e1", "#ffffff",
 					    "#820000", "#9b0000", "#b40000", "#cd0000", "#e60000", "#ff0000", "#ff1919", "#ff3232", "#ff4b4b", "#ff6464", "#ff7d7d",
 					    "#823400", "#9b3e00", "#b44800", "#cd5200", "#e65c00", "#ff6600", "#ff7519", "#ff8532", "#ff944b", "#ffa364", "#ffb27d",
@@ -278,28 +286,27 @@ class Menus {
 					    "#4d004d", "#602060", "#660066", "#993399", "#ac39ac", "#bf40bf", "#c653c6", "#cc66cc", "#d279d2", "#d98cd9", "#df9fdf",
 					    "#660029", "#800033", "#b30047", "#cc0052", "#e6005c", "#ff0066", "#ff1a75", "#ff3385", "#ff4d94", "#ff66a3", "#ff99c2"];
 		let columns = 11;
-		let onclickCommand = Menus.onclickStyleCommand(tag, style, childGroupTag);
 		let colorTable = document.createElement("table");
-		colorTable.className = "color-table"
+		colorTable.className = "color-table";
 		let colorRow;
 		for (let color of colors) {
 			if ((colors.indexOf(color) % columns) == 0) colorRow = colorTable.insertRow(-1);
 			let colorCell= colorRow.insertCell(-1);
 			colorCell.className = "color-option";
 			colorCell.style.backgroundColor = color;
-			colorCell.setAttribute("data-dismiss", "modal");
-			colorCell.setAttribute("onclick", onclickCommand.replace( '*chosenOption*', color));
+			colorCell.setAttribute("onclick", "document.getElementById('color-chosen').style.backgroundColor = '" + color + "';");
 		}
-		parent.innerHTML = "";
-		parent.appendChild(colorTable);
-	}
-	static showTextColorChooser(title, style) {
-		Menus.showColorChooser(title, null, style);
-	}
-	static showColorChooser(title, tag, style, childGroupTag) {
-		document.getElementById('mutableModalTitle').innerHTML = title;
-		Menus.attachColorPalette(document.getElementById('mutableModalBody'), tag, style, childGroupTag);
+		let chosenRow = colorTable.insertRow(-1);
+		let colorChosen = chosenRow.insertCell(-1);
+		colorChosen.setAttribute("Id", "color-chosen");
+		colorChosen.className = "color-chosen";
+		document.getElementById('mutableModalBody').innerHTML = colorTable.outerHTML;
+
 		document.getElementById('mutableModalFooter').innerHTML = Menus.modalButton("Cancel").outerHTML;
+		let submitButton = Menus.modalButton("Submit");
+		submitButton.setAttribute("onclick", Menus.constantOnclickStyle(tag, style, "document.getElementById('color-chosen').style.backgroundColor" ,childGroupTag)); 
+		document.getElementById('mutableModalFooter').appendChild(submitButton);
+
 		$('#mutableModal').modal();
 	}
 
