@@ -126,7 +126,7 @@ class Edit {
 	static sanitizeTable(table) {
 		var colgroups = table.getElementsByTagName('colgroup');
 		for (let colgroup of colgroups) table.removeChild(colgroup);
-		if (table.className != 'textBlock') table.style.width = null; //Multi-Column Text Areas are tables with width set to 100%
+		table.style.width = null;
 	}
 
 // HTML ELEMENT replacement functions

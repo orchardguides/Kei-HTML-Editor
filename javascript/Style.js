@@ -8,7 +8,7 @@
 
 'use strict';
 
-// Uses Edit.js & TextBlock.js
+// Uses Edit.js
 
 // Collection of static functions to style HTML elements
 class Style {

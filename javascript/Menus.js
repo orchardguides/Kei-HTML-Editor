@@ -13,25 +13,6 @@ var selection;  // Global Variable to persist selection in document across mouse
 window.onload = function() {
 	document.execCommand('defaultParagraphSeparator', false, 'div');
 	document.execCommand('styleWithCSS', false, true);
-
-// Function to make all Bootstrap Modals draggable
-	$(".modal-header").on("mousedown", function(mousedownEvt) {
-		var $draggable = $(this);
-		var x = mousedownEvt.pageX - $draggable.offset().left,
-		y = mousedownEvt.pageY - $draggable.offset().top;
-		$("body").on("mousemove.draggable", function(mousemoveEvt) {
-			$draggable.closest(".modal-content").offset({
-				"left": mousemoveEvt.pageX - x,
-				"top": mousemoveEvt.pageY - y
-			});
-		});
-		$("body").one("mouseup", function() {
-			$("body").off("mousemove.draggable");
-		});
-		$draggable.closest(".modal").one("bs.modal.hide", function() {
-			$("body").off("mousemove.draggable");
-		});
-	});
 }
 
 //Collection of static functions to create common Bootstrap menus
@@ -87,13 +68,15 @@ class Menus {
 	}
 	static tableInsertElement(tag, position) {
 		Edit.selectRange(selection);
-		if (tag.toLowerCase() == "col") Table.insertColumn(position);
-		if (tag.toLowerCase() == "tr") Table.insertRow(position);
-		if (tag.toLowerCase() == "td") Table.insertCell(position);
+		Table.insertElement(tag, position);
 	}
 	static tableCellSpan(rowOrCol, span) {
 		Edit.selectRange(selection);
 		Table.cellSpan(rowOrCol, span);
+	}
+	static tableInsertLine(aboveBelow) {
+		Edit.selectRange(selection);
+		Table.insertLine(aboveBelow);
 	}
 
 //  Static function to format editing commands for use as onclick functions
@@ -106,148 +89,27 @@ class Menus {
 		return Menus.constantOnclickStyle(tag, style, "'*chosenOption*'", childGroupTag);
 	}
 
-//  Static Functions to format and display Pick Lists in Bootstrap Menus
-	static connectToMenu(parentMenu, title) {
-		var dropdownSubmenu = document.createElement("li");
-		dropdownSubmenu.className = "dropdown-submenu";
-		parentMenu.appendChild(dropdownSubmenu);
-		var div = document.createElement("div");
-		div.className = "dropdown-item";
-		div.innerHTML = title + " &rarr;";
-		dropdownSubmenu.appendChild(div);
-		var dropdownMenu = document.createElement("ul");
-		dropdownMenu.className = "dropdown-menu";
-		dropdownSubmenu.appendChild(dropdownMenu);
-		return dropdownMenu;
-	}
-	static pickListItem(description, onclickCommand, listItemStyle, listItemStyleValue) {
-		let li = document.createElement("li");
-		li.className = "dropdown-item";
-		li.setAttribute("onclick", onclickCommand);
-		if (listItemStyle) {
-			let span = document.createElement("span");
-			span.style[listItemStyle] = listItemStyleValue;
-			span.innerHTML = description;
-			li.appendChild(span);
-		} else li.innerHTML = description;
-		return li;
-	}
-	static pickList(parent, title, descriptions, onclickCommand, commandOptions, listItemStyle, listItemStyleValues) {
-		let dropdownMenu = Menus.connectToMenu(parent, title);
-		for (let i=0; i<commandOptions.length; i++) {
-			if (listItemStyle) {
-				dropdownMenu.appendChild(Menus.pickListItem(descriptions[i], onclickCommand.replace( '*chosenOption*', commandOptions[i]),
-					listItemStyle, listItemStyleValues[i]));
-			} else dropdownMenu.appendChild(Menus.pickListItem(descriptions[i], onclickCommand.replace( '*chosenOption*', commandOptions[i])));
-		}
+//  Static functions to display custom Bootstrap Modals
+	static mutableModalShow() {
+		$('#mutableModalDialog').css({
+			left:  ($(window).width() - $("#mutableModalDialog").width())/2,
+			top: 0
+		});
+		$('#mutableModalDialog').draggable({
+			containment: "window",
+			handle: ".modal-header"
+		});
+		$('#mutableModal').modal("show");
 	}
 
-	static fontNames() {
-		return ["Arial", "Arial Black", "Calibri", "Cursive", "Courier New",  "Times New Roman", "Verdana"];
-	}
-	static fontNameTextList(parent) {
-		let title = "Font Family";
-		let descriptions = Menus.fontNames();
-		let onclickCommand = Menus.variableOnclickStyle(null, "fontName");
-		let commandOptions = descriptions;
-		let listItemStyle = "fontFamily";
-		let listItemStyleValues = descriptions;
-		Menus.pickList(parent, title, descriptions, onclickCommand, commandOptions, listItemStyle, listItemStyleValues);
-	}
-	static fontFamilyList(parent, tag, childGroupTag) {
-		let title = "Font Family";
-		let descriptions = Menus.fontNames();
-		let onclickCommand = Menus.variableOnclickStyle(tag, "fontFamily", childGroupTag);
-		let commandOptions = descriptions;
-		let listItemStyle = "fontFamily";
-		let listItemStyleValues = descriptions;
-		Menus.pickList(parent, title, descriptions, onclickCommand, commandOptions, listItemStyle, listItemStyleValues);
-	}
-
-	static fontSizes() {
-		return ["xx-small", "x-small", "small", "medium", "large", "x-large", "xx-large"];
-	}
-	static fontSizeTextList(parent) {
-		let title = "Font Size";
-		let descriptions = Menus.fontSizes();
-		let onclickCommand = Menus.variableOnclickStyle(null, "fontSize");
-		let commandOptions  = [1, 2, 3, 4, 5, 6, 7];
-		let listItemStyle = "fontSize";
-		let listItemStyleValues = descriptions;
-		Menus.pickList(parent, title, descriptions, onclickCommand, commandOptions, listItemStyle, listItemStyleValues);
-	}
-	static fontSizeList(parent, tag, childGroupTag) {
-		let title = "Font Size";
-		let descriptions = Menus.fontSizes();
-		let onclickCommand = Menus.variableOnclickStyle(tag, "fontSize", childGroupTag);
-		let commandOptions = descriptions;
-		let listItemStyle = "fontSize";
-		let listItemStyleValues = descriptions;
-		Menus.pickList(parent, title, descriptions, onclickCommand, commandOptions, listItemStyle, listItemStyleValues);
-	}
-
-	static borderCollapseList(parent, tag, childGroupTag) {
-		let title = "Collapse";
-		let descriptions = ["Collapse", "Separate"];
-		let onclickCommand = Menus.variableOnclickStyle(tag, "borderCollapse", childGroupTag);
-		let commandOptions = ["collapse", "separate"];
-		Menus.pickList(parent, title, descriptions, onclickCommand, commandOptions);
-	}
-	static borderStyleList(parent, tag, childGroupTag) {
-		let title = "Style";
-		let descriptions = ["Solid", "Dotted", "Dashed", "None", "Hidden"];
-		let onclickCommand = Menus.variableOnclickStyle(tag, "borderStyle", childGroupTag);
-		let commandOptions = ["solid", "dotted", "dashed", "none", "hidden"];
-		Menus.pickList(parent, title, descriptions, onclickCommand, commandOptions);
-	}
-	static textAlingList(parent, tag, childGroupTag) {
-		let title = "Text Alignment";
-		let descriptions = ["Left", "Center", "Right"];
-		let onclickCommand = Menus.variableOnclickStyle(tag, "textAlign", childGroupTag);
-		let commandOptions = ["left", "center", "right"];
-		Menus.pickList(parent, title, descriptions, onclickCommand, commandOptions);
-	}
-	static tableDeleteList(parent) {
-		let title = "Delete";
-		let descriptions = ["Table", "Column", "Row", "Cell"];
-		let onclickCommand = "Menus.tableDeleteElement('*chosenOption*');";
-		let commandOptions = ["table", "col", "tr", "td"];
-		Menus.pickList(parent, title, descriptions, onclickCommand, commandOptions);
-	}
-	static tableJustifyList(parent) {
-		let title = "Justify Table";
-		let descriptions = ["Left", "Right", "Center"];
-		let onclickCommand = "Menus.tableJustify('*chosenOption*')";
-		let commandOptions = ["left", "right", "center"];
-		Menus.pickList(parent, title, descriptions, onclickCommand, commandOptions);
-	}
-	static tableInsertElementList(parent) {
-		let dropdownMenu = Menus.connectToMenu(parent, "Insert");
-		dropdownMenu.appendChild(Menus.pickListItem("Column Left", "Menus.tableInsertElement('col', 'left');"));
-		dropdownMenu.appendChild(Menus.pickListItem("Column Right", "Menus.tableInsertElement('col', 'right');"));
-		dropdownMenu.appendChild(Menus.pickListItem("Row Above", "Menus.tableInsertElement('tr', 'above');"));
-		dropdownMenu.appendChild(Menus.pickListItem("Row Below", "Menus.tableInsertElement('tr', 'below');"));
-		dropdownMenu.appendChild(Menus.pickListItem("Cell Left", "Menus.tableInsertElement('td', 'left');"));
-		dropdownMenu.appendChild(Menus.pickListItem("Cell Right", "Menus.tableInsertElement('td', 'right');"));
-	}
-	static verticalAlingList(parent, tag, childGroupTag) {
-		let title = "Vertical Alignment";
-		let descriptions = ["Top", "Middle", "Bottom"];
-		let onclickCommand = Menus.variableOnclickStyle(tag, "verticalAlign", childGroupTag);
-		let commandOptions = ["top", "middle", "bottom"];
-		Menus.pickList(parent, title, descriptions, onclickCommand, commandOptions);
-	}
-
-//  Static functions to format and display custom Bootstrap Modals
 	static modalButton(text) {
-		let cancelButton = document.createElement("button");
-		cancelButton.className = "btn btn-primary btn-sm";
-		cancelButton.setAttribute("data-dismiss", "modal");
-		cancelButton.innerHTML = text;
-		return cancelButton;
+		let button = document.createElement("button");
+		button.className = "btn btn-primary btn-sm";
+		button.setAttribute("data-dismiss", "modal");
+		button.innerHTML = text;
+		return button;
 	}
-
-	static modalSelect(labelText, id, min, max, step, selected, units) {
+	static modalNumericSelect(labelText, id, min, max, step, selected, units) {
 		let div = document.createElement("div");
 		div.className = "row";
 		let label = document.createElement("label");
@@ -270,6 +132,123 @@ class Menus {
 		return div;
 	}
 
+	static markChosenStyle(dataValue, description, styleCellStyle, styleCellValue) {
+		let chosenStyleCell = document.getElementById('chosenStyleCell');
+		chosenStyleCell.dataset.value = dataValue;
+		chosenStyleCell.innerHTML = description;
+		if (styleCellStyle) chosenStyleCell.style[styleCellStyle] = styleCellValue;
+		Edit.selectRange(selection);
+	}
+
+	static showStyleChooser(tag, style, values, childGroupTag, title, descriptions, styleCellStyle, stylCellStyleValues) {
+		document.getElementById('mutableModalTitle').innerHTML = title;
+
+		let styleTable = document.createElement("table");
+		styleTable.className = "style-table";
+		let styleRow;
+		for (let i=0; i< descriptions.length; i++) {
+			styleRow = styleTable.insertRow(-1);
+			let styleCell= styleRow.insertCell(-1);
+			styleCell.className = "style-option";
+			styleCell.innerHTML = descriptions[i];
+			if (styleCellStyle) {
+				styleCell.style[styleCellStyle] = stylCellStyleValues[i];
+				styleCell.setAttribute("onclick", "Menus.markChosenStyle('" + values[i] + "', '" + descriptions[i] + "', '" + styleCellStyle + "', '" + stylCellStyleValues[i] + "');");
+			} else styleCell.setAttribute("onclick", "Menus.markChosenStyle('" + values[i] + "', '" + descriptions[i] + "', '" + "');");
+		}
+		let chosenStyleRow = styleTable.insertRow(-1);
+		let chosenStyleCell = chosenStyleRow.insertCell(-1);
+		chosenStyleCell.setAttribute("Id", "chosenStyleCell");
+		chosenStyleCell.className = "chosen-style";
+		document.getElementById('mutableModalBody').innerHTML = styleTable.outerHTML;
+
+		document.getElementById('mutableModalFooter').innerHTML = Menus.modalButton("Cancel").outerHTML;
+		let submitButton = Menus.modalButton("Submit");
+		submitButton.setAttribute("onclick", 
+			Menus.constantOnclickStyle(tag, style, "document.getElementById('chosenStyleCell').dataset.value", childGroupTag)); 
+		document.getElementById('mutableModalFooter').appendChild(submitButton);
+
+		Menus.mutableModalShow();
+		Edit.selectRange(selection);
+	}
+
+	static fontNames() {
+		return ["Arial", "Arial Black", "Calibri", "Cursive", "Courier New",  "Times New Roman", "Verdana"];
+	}
+	static showFontFamilyChooser(tag, childGroupTag) {
+		let style = "fontFamily";
+		let values = Menus.fontNames();
+		let title = "Font Family";
+		let descriptions = Menus.fontNames();
+		let styleCellStyle = "fontFamily";
+		let stylCellStyleValues = Menus.fontNames();
+		Menus.showStyleChooser(tag, style, values, childGroupTag, title, descriptions, styleCellStyle, stylCellStyleValues);
+	}
+	static showTextFontFamilyChooser() {
+		let style = "fontName";
+		let values = Menus.fontNames();
+		let title = "Font Family";
+		let descriptions = Menus.fontNames();
+		let styleCellStyle = "fontFamily";
+		let stylCellStyleValues = Menus.fontNames();
+		Menus.showStyleChooser(null, style, values, null, title, descriptions, styleCellStyle, stylCellStyleValues);
+	}
+
+	static fontSizes() {
+		return ["xx-small", "x-small", "small", "medium", "large", "x-large", "xx-large"];
+	}
+	static showFontSizeChooser(tag, childGroupTag) {
+		let style = "fontSize";
+		let values = Menus.fontSizes();
+		let title = "Font Size";
+		let descriptions = Menus.fontSizes();
+		let styleCellStyle = "fontSize";
+		let stylCellStyleValues = Menus.fontSizes();
+		Menus.showStyleChooser(tag, style, values, childGroupTag, title, descriptions, styleCellStyle, stylCellStyleValues);
+	}
+	static showTextFontSizeChooser() {
+		let style = "fontSize";
+		let values = [1,2,3,4,5,6,7];
+		let title = "Font Size";
+		let descriptions = Menus.fontSizes();
+		let styleCellStyle = "fontSize";
+		let stylCellStyleValues = Menus.fontSizes();
+		Menus.showStyleChooser(null, style, values, null, title, descriptions, styleCellStyle, stylCellStyleValues);
+	}
+	static showBorderCollapseChooser(tag, childGroupTag) {
+		let style = "borderCollapse";
+		let values = ["collapse", "separate"];
+		let title = "Border Collapse";
+		let descriptions = ["Collapse", "Separate"];
+		Menus.showStyleChooser(tag, style, values, childGroupTag, title, descriptions);
+	}
+	static showBorderStyleChooser(tag, childGroupTag) {
+		let style = "borderStyle";
+		let values = ["solid", "dotted", "dashed", "none", "hidden"];
+		let title = "Border Style";
+		let descriptions = ["Solid", "Dotted", "Dashed", "None", "Hidden"];
+		Menus.showStyleChooser(tag, style, values, childGroupTag, title, descriptions);
+	}
+	static showTextAlignChooser(tag, childGroupTag) {
+		let style = "textAlign";
+		let values = ["left", "center", "right"];
+		let title = "Text Alignment";
+		let descriptions = ["Left", "Center", "Right"];
+		Menus.showStyleChooser(tag, style, values, childGroupTag, title, descriptions);
+	}
+	static showVerticalAlignChooser(tag, childGroupTag) {
+		let style = "verticalAlign";
+		let values = ["top", "middle", "bottom"];
+		let title = "Vertical Alignment";
+		let descriptions = ["Top", "Middle", "Bottom"];
+		Menus.showStyleChooser(tag, style, values, childGroupTag, title, descriptions);
+	}
+
+	static markChosenColor(color) {
+		let chosenColorCell = document.getElementById('chosenColorCell');
+		chosenColorCell.style.backgroundColor = color;
+		Edit.selectRange(selection);
+	}
 	static showTextColorChooser(title, style) {
 		Menus.showColorChooser(title, null, style);
 	}
@@ -277,14 +256,14 @@ class Menus {
 		document.getElementById('mutableModalTitle').innerHTML = title;
 
 		let colors = ["#000000", "#191919", "#323232", "#4b4b4b", "#646464", "#7d7d7d", "#969696", "#afafaf", "#c8c8c8", "#e1e1e1", "#ffffff",
-					    "#820000", "#9b0000", "#b40000", "#cd0000", "#e60000", "#ff0000", "#ff1919", "#ff3232", "#ff4b4b", "#ff6464", "#ff7d7d",
-					    "#823400", "#9b3e00", "#b44800", "#cd5200", "#e65c00", "#ff6600", "#ff7519", "#ff8532", "#ff944b", "#ffa364", "#ffb27d",
-					    "#828200", "#9b9b00", "#b4b400", "#cdcd00", "#e6e600", "#ffff00", "#ffff19", "#ffff32", "#ffff4b", "#ffff64", "#ffff7d",
-					    "#003300", "#004d00", "#008000", "#00b300", "#00cc00", "#00e600", "#1aff1a", "#4dff4d", "#66ff66", "#80ff80", "#b3ffb3",
-					    "#001a4d", "#002b80", "#003cb3", "#004de6", "#0000ff", "#0055ff", "#3377ff", "#4d88ff", "#6699ff", "#80b3ff", "#b3d1ff",
-					    "#003333", "#004d4d", "#006666", "#009999", "#00cccc", "#00ffff", "#1affff", "#33ffff", "#4dffff", "#80ffff", "#b3ffff",
-					    "#4d004d", "#602060", "#660066", "#993399", "#ac39ac", "#bf40bf", "#c653c6", "#cc66cc", "#d279d2", "#d98cd9", "#df9fdf",
-					    "#660029", "#800033", "#b30047", "#cc0052", "#e6005c", "#ff0066", "#ff1a75", "#ff3385", "#ff4d94", "#ff66a3", "#ff99c2"];
+					"#820000", "#9b0000", "#b40000", "#cd0000", "#e60000", "#ff0000", "#ff1919", "#ff3232", "#ff4b4b", "#ff6464", "#ff7d7d",
+					"#823400", "#9b3e00", "#b44800", "#cd5200", "#e65c00", "#ff6600", "#ff7519", "#ff8532", "#ff944b", "#ffa364", "#ffb27d",
+					"#828200", "#9b9b00", "#b4b400", "#cdcd00", "#e6e600", "#ffff00", "#ffff19", "#ffff32", "#ffff4b", "#ffff64", "#ffff7d",
+					"#003300", "#004d00", "#008000", "#00b300", "#00cc00", "#00e600", "#1aff1a", "#4dff4d", "#66ff66", "#80ff80", "#b3ffb3",
+					"#001a4d", "#002b80", "#003cb3", "#004de6", "#0000ff", "#0055ff", "#3377ff", "#4d88ff", "#6699ff", "#80b3ff", "#b3d1ff",
+					"#003333", "#004d4d", "#006666", "#009999", "#00cccc", "#00ffff", "#1affff", "#33ffff", "#4dffff", "#80ffff", "#b3ffff",
+					"#4d004d", "#602060", "#660066", "#993399", "#ac39ac", "#bf40bf", "#c653c6", "#cc66cc", "#d279d2", "#d98cd9", "#df9fdf",
+					"#660029", "#800033", "#b30047", "#cc0052", "#e6005c", "#ff0066", "#ff1a75", "#ff3385", "#ff4d94", "#ff66a3", "#ff99c2"];
 		let columns = 11;
 		let colorTable = document.createElement("table");
 		colorTable.className = "color-table";
@@ -294,73 +273,74 @@ class Menus {
 			let colorCell= colorRow.insertCell(-1);
 			colorCell.className = "color-option";
 			colorCell.style.backgroundColor = color;
-			colorCell.setAttribute("onclick", "document.getElementById('color-chosen').style.backgroundColor = '" + color + "';");
+			colorCell.setAttribute("onclick", "Menus.markChosenColor('" + color + "');");
 		}
-		let chosenRow = colorTable.insertRow(-1);
-		let colorChosen = chosenRow.insertCell(-1);
-		colorChosen.setAttribute("Id", "color-chosen");
-		colorChosen.className = "color-chosen";
+		let chosenStyleRow = colorTable.insertRow(-1);
+		let chosenColorCell = chosenStyleRow.insertCell(-1);
+		chosenColorCell.setAttribute("Id", "chosenColorCell");
+		chosenColorCell.className = "chosen-color";
 		document.getElementById('mutableModalBody').innerHTML = colorTable.outerHTML;
 
 		document.getElementById('mutableModalFooter').innerHTML = Menus.modalButton("Cancel").outerHTML;
 		let submitButton = Menus.modalButton("Submit");
-		submitButton.setAttribute("onclick", Menus.constantOnclickStyle(tag, style, "document.getElementById('color-chosen').style.backgroundColor" ,childGroupTag)); 
+		submitButton.setAttribute("onclick", 
+			Menus.constantOnclickStyle(tag, style, "document.getElementById('chosenColorCell').style.backgroundColor", childGroupTag)); 
 		document.getElementById('mutableModalFooter').appendChild(submitButton);
 
-		$('#mutableModal').modal();
+		Menus.mutableModalShow();
+		Edit.selectRange(selection);
 	}
 
 	static showTableInsert() {
 		document.getElementById('mutableModalTitle').innerHTML = "Insert Table";
 
 		document.getElementById('mutableModalBody').innerHTML = "";
-		document.getElementById('mutableModalBody').appendChild(Menus.modalSelect("Columns", "table_Insert_columns", 1, 8, 1, 3));
-		document.getElementById('mutableModalBody').appendChild(Menus.modalSelect("Rows", "table_Insert_rows", 1, 20, 1, 3));
-		document.getElementById('mutableModalBody').appendChild(Menus.modalSelect("Column Width", "table_Insert_width", 2, 40, 2, 2, "cm"));
-		document.getElementById('mutableModalFooter').innerHTML = Menus.modalButton("Cancel").outerHTML;
+		document.getElementById('mutableModalBody').appendChild(Menus.modalNumericSelect("Columns", "columnsSelect", 1, 8, 1, 3));
+		document.getElementById('mutableModalBody').appendChild(Menus.modalNumericSelect("Rows", "rowsSelect", 1, 20, 1, 3));
+		document.getElementById('mutableModalBody').appendChild(Menus.modalNumericSelect("Column Width", "widthSelect", 2, 40, 2, 2, "cm"));
 
 		document.getElementById('mutableModalFooter').innerHTML = Menus.modalButton("Cancel").outerHTML;
 		let submitButton = Menus.modalButton("Submit");
 		submitButton.setAttribute("onclick",
-			"Menus.tableInsert(document.getElementById('table_Insert_columns').value, " +
-				"document.getElementById('table_Insert_rows').value, " +
-				"document.getElementById('table_Insert_width').value)");
+			"Menus.tableInsert(document.getElementById('columnsSelect').value, " +
+				"document.getElementById('rowsSelect').value, " +
+				"document.getElementById('widthSelect').value)");
 		document.getElementById('mutableModalFooter').appendChild(submitButton);
 
-		$('#mutableModal').modal();
+		Menus.mutableModalShow();
 	}
 
 	static showCellSpanChooser(title, rowOrColumn) {
 		document.getElementById('mutableModalTitle').innerHTML = title;
 
 		document.getElementById('mutableModalBody').innerHTML = "";
-		document.getElementById('mutableModalBody').appendChild(Menus.modalSelect("Span", "select_chooser", 1, 8, 1, 1));
+		document.getElementById('mutableModalBody').appendChild(Menus.modalNumericSelect("Span", "cellSpanSelect", 1, 8, 1, 1));
 
 		document.getElementById('mutableModalFooter').innerHTML = Menus.modalButton("Cancel").outerHTML;
 		let submitButton = Menus.modalButton("Submit");
 		submitButton.setAttribute("onclick", "Menus.tableCellSpan('" + rowOrColumn + 
-				"', document.getElementById('select_chooser').value)");
+				"', document.getElementById('cellSpanSelect').value)");
 		document.getElementById('mutableModalFooter').appendChild(submitButton);
 
-		$('#mutableModal').modal();
+		Menus.mutableModalShow();
 	}
 
-	static showSelectChooser(tag, style, title, labelText, min, max, step, selected, units, childGroupTag) {
+	static showNumericChooser(tag, style, title, labelText, min, max, step, selected, units, childGroupTag) {
 		document.getElementById('mutableModalTitle').innerHTML = title;
 
-		document.getElementById('mutableModalBody').innerHTML = Menus.modalSelect(labelText, "select_chooser", min, max, step, selected, units).outerHTML;
+		document.getElementById('mutableModalBody').innerHTML = Menus.modalNumericSelect(labelText, "numericSelect", min, max, step, selected, units).outerHTML;
 
 		document.getElementById('mutableModalFooter').innerHTML = Menus.modalButton("Cancel").outerHTML;
 		let submitButton = Menus.modalButton("Submit");
 		if (childGroupTag) submitButton.setAttribute("onclick", "Menus.elementStyle('" + tag  +"', '" + 
 				style +  
-				"', document.getElementById('select_chooser').value, '" + 
+				"', document.getElementById('numericSelect').value, '" + 
 				childGroupTag +"')");
 		else submitButton.setAttribute("onclick", "Menus.elementStyle('" + tag  +"', '" + 
 				style + 
-				 "', document.getElementById('select_chooser').value)");
+				 "', document.getElementById('numericSelect').value)");
 		document.getElementById('mutableModalFooter').appendChild(submitButton);
 
-		$('#mutableModal').modal();
+		Menus.mutableModalShow();
 	}
 }

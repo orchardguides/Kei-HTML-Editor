@@ -48,6 +48,11 @@ class Table {
 		}
 	}
 
+	static insertElement(tag, position) {
+		if (tag.toLowerCase() == 'col') Table.insertColumn(position);
+		else if (tag.toLowerCase() == 'tr') Table.insertRow(position);
+		else if (tag.toLowerCase() == 'td') Table.insertCell(position);
+	}
 	static insertColumn(leftOrRight) {
 		var cell = Edit.getTagAboveCaret('td');
 		var row = Edit.getTagAboveCaret('tr');
@@ -73,7 +78,6 @@ class Table {
 			Edit.replaceElement(table, clonedTable); 
 		}
 	}
-
 	static insertRow(aboveOrBelow) {
 		var targetRow = Edit.getTagAboveCaret('tr');
 		var table = Edit.getTagAboveCaret('table');
@@ -178,6 +182,22 @@ class Table {
 				else clonedCell.colSpan = span;
 				Edit.replaceElement(cell, clonedCell);
 			}
+		}
+	}
+
+	static insertLine(aboveBelow) {
+		var table = Edit.getTagAboveCaret('table');	
+		if ((table) &&(['above','below'].includes(aboveBelow.toLowerCase()))) {
+			let range = document.createRange();
+			if (aboveBelow.toLowerCase() == 'above') {
+				range.setStartBefore(table);
+				range.setEndBefore(table);
+			} else {
+				range.setStartAfter(table);
+				range.setEndAfter(table);
+			}
+			Edit.selectRange(range);
+			Edit.insertHTML('<p></p>');
 		}
 	}
 }
