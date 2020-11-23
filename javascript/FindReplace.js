@@ -12,56 +12,60 @@
 
 // Class to handle finding and replacing text selections in HTML documents
 class FindReplace {
-	constructor(nodeIndex, startOffset, endOffset) {
-		this.nodeIndex = ((nodeIndex) ? nodeIndex : 0);
-		this.startOffset = ((startOffset) ? startOffset : 0);
-		this.endOffset = ((endOffset) ? endOffset : 0);
+	constructor(target, replacement, matchCase) {
+		this.TARGET = target;
+		this.REPLACEMENT = replacement;
+		this.MATCHCASE = matchCase;
+		this.NODEINDEX = 0;
+		this.STARTOFFSET = 0;
+		this.ENDOFFSET = 0;
 	}
 
-	getNodeIndex() {
-		return this.nodeIndex;
+	get endOffset() {
+		return this.ENDOFFSET;
 	}
-	setNodeIndex(nodeIndex) {
-		this.nodeIndex = nodeIndex;
+	set endOffset(endOffset) {
+		this.ENDOFFSET = endOffset;
 	}
-	incrementNodeIndex() {
-		this.nodeIndex++;
+	get matchCase() {
+		return this.MATCHCASE;
 	}
-
-	getStartOffset() {
-		return this.startOffset;
+	set matchCase(matchCase) {
+		this.MATCHCASE = matchCase;
 	}
-	setStartOffset(startOffset) {
-		this.startOffset = startOffset;
+	get nodeIndex() {
+		return this.NODEINDEX;
 	}
-	getEndOffset() {
-		return this.endOffset;
+	set nodeIndex(nodeIndex) {
+		this.NODEINDEX = nodeIndex;
 	}
-	setEndOffset(endOffset) {
-		this.endOffset = endOffset;
+	get replacement() {
+		return this.REPLACEMENT;
 	}
-
-	getSelection() {
-		var textNodes = Edit.getChildTextNodes(document.body);
-		Edit.selectRangeInNode(textNodes[this.nodeIndex], this.startOffset, this.endOffset);
-		return window.getSelection().toString();
+	set replacement(replacement) {
+		this.REPLACEMENT = replacement;
 	}
-	highlightSelection() {
-		var textNodes = Edit.getChildTextNodes(document.body);
-		Edit.selectRangeInNode(textNodes[this.nodeIndex], this.startOffset, this.endOffset);
+	get startOffset() {
+		return this.STARTOFFSET;
 	}
-	replaceSelection(replacement) {
-		var textNodes = Edit.getChildTextNodes(document.body);
-		Edit.selectRangeInNode(textNodes[this.nodeIndex], this.startOffset, this.endOffset);
-		Edit.insertText(replacement);
-		this.endOffset = this.startOffset + replacement.length;
+	set startOffset(startOffset) {
+		this.STARTOFFSET = startOffset;
+	}
+	get target() {
+		return this.TARGET;
+	}
+	set target(target) {
+		this.TARGET = target;
 	}
 
 // Find and replace functions
-	findNextMatch(string, matchCase) {
-		var textNodes = Edit.getChildTextNodes(document.body);
+	textIncludesTarget() {
+		return document.getElementById('keieditable').textContent.includes(this.target);
+	}
+	find() {
+		var textNodes = Edit.getChildTextNodes(document.getElementById('keieditable'));
 		for (this.nodeIndex; this.nodeIndex<textNodes.length; this.nodeIndex++) {
-			let regex = new RegExp(Edit.escapeForRegex(string), ((matchCase) ? 'g' : 'gi'));
+			let regex = new RegExp(Edit.escapeForRegex(this.target), ((this.matchCase) ? 'g' : 'gi'));
 			let text = textNodes[this.nodeIndex].nodeValue.substring(this.endOffset);
 			let words;
 			while (words = regex.exec(text)) {
@@ -74,34 +78,18 @@ class FindReplace {
 		}
 		return false;
 	} 
-	replaceSelectionAll(replacement, matchCase) {
-		var selection = this.getSelection();
-		this.replaceSelection(replacement);
-		while (this.findNextMatch(selection, matchCase)) this.replaceSelection(replacement);
+	replace() {
+		var textNodes = Edit.getChildTextNodes(document.getElementById('keieditable'));
+		Edit.selectRangeInNode(textNodes[this.nodeIndex], this.startOffset, this.endOffset);
+		Edit.insertText(this.replacement);
+		this.endOffset = this.startOffset + this.replacement.length;
 	}
-
-	findNextWordMatch(word) {
-		var textNodes = Edit.getChildTextNodes(document.body);
-		for (this.nodeIndex; this.nodeIndex<textNodes.length; this.nodeIndex++) {
-			let regex = /[A-Za-z]+/g; // Return groups of letters
-			let text = textNodes[this.nodeIndex].nodeValue.substring(this.endOffset);
-			let words;
-			while (words = regex.exec(text)) {
-				if (words[0] == word) {
-					this.startOffset = this.endOffset + words.index;
-					this.endOffset = this.startOffset + words[0].length;
-					return true;
-				}
-			}
-			this.startOffset = 0;                           // Reset for next node
-			this.endOffset = 0;                             // Reset for next node
-		}
-		return false;
+	replaceAll() {
+		this.replace();
+		while (this.find()) this.replace();
 	}
-	replaceSelectedWordAll(replacement) {
-		var selection = this.getSelection();
-		this.replaceSelection(replacement);
-		while (this.findNextWordMatch(selection)) this.replaceSelection(replacement);
+	getSelection() {
+		var textNodes = Edit.getChildTextNodes(document.getElementById('keieditable'));
+		return Edit.getRangeInNode(textNodes[this.nodeIndex], this.startOffset, this.endOffset);
 	}
-
 }

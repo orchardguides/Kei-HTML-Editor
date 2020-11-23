@@ -45,11 +45,14 @@ class Edit {
 	    range.setEndAfter(node);
 	    Edit.selectRange(range);
 	}
-	static selectRangeInNode(node, startOffset, endOffset) {
+	static getRangeInNode(node, startOffset, endOffset) {
 	    var range = document.createRange();
 	    range.setStart(node, startOffset);
 	    range.setEnd(node, endOffset);
-	    Edit.selectRange(range);
+	    return range;
+	}
+	static selectRangeInNode(node, startOffset, endOffset) {
+	    Edit.selectRange(Edit.getRangeInNode(node, startOffset, endOffset));
 	}
 
 // All editing commands are routed through the execCommand function.
@@ -108,7 +111,7 @@ class Edit {
 	static getTagWithAttributeAboveCaret(tag, attribute, logicalOperator, value) {
 		var node = window.getSelection().getRangeAt(0).startContainer;
 		while (node) {
-			if ((node.tagName) && (node.tagName.toLowerCase() == tag.toLowerCase()) &&
+			if ((node[attribute]) && (node.tagName) && (node.tagName.toLowerCase() == tag.toLowerCase()) && 
 				(Edit.doesElementHaveAttribute(node, attribute, logicalOperator, value))) return node;
 			else node = node.parentElement;
 		}
@@ -116,6 +119,18 @@ class Edit {
 	static isCaretInsideTagWithAttribute(tag, attribute, logicalOperator, value) {
 		if (!document.hasFocus()) return false;
 		if (Edit.getTagWithAttributeAboveCaret(tag, attribute, logicalOperator, value)) return true;
+		else return false;
+	}
+	static getParentWithAttributeAboveCaret(attribute, logicalOperator, value) {
+		var node = window.getSelection().getRangeAt(0).startContainer;
+		while (node) {
+			if ((node[attribute]) && (Edit.doesElementHaveAttribute(node, attribute, logicalOperator, value))) return node;
+			else node = node.parentElement;
+		}
+	}
+	static isCaretInsideAttribute(attribute, logicalOperator, value) {
+		if (!document.hasFocus()) return false;
+		if (Edit.getParentWithAttributeAboveCaret(attribute, logicalOperator, value)) return true;
 		else return false;
 	}
 	

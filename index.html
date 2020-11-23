@@ -28,14 +28,14 @@
 	<link rel="stylesheet" href="./css/KeiEditorMenu.css">
 
 	<script src='./javascript/Edit.js'></script>
-	<script src='./javascript/FindReplace.js'></script>
 	<script src='./javascript/Menus.js'></script>
+	<script src='./javascript/FindReplace.js'></script>
 	<script src='./javascript/Style.js'></script>
 	<script src='./javascript/Table.js'></script>
 </head>
 
 <body>
-	<nav class="navbar navbar-dark bg-dark fixed-top navbar-expand-sm" role="navigation">
+	<nav class="navbar navbar-dark bg-dark fixed-top navbar-expand-sm" role="navigation" onmousemove="Menus.makeMenuReady()">
 		<div class="navbar-brand"><span class="text-primary"><b>Kei HTML Editor</b></span></div>
 		<div class="collapse navbar-collapse">
 			<ul class="nav navbar-nav">
@@ -234,16 +234,22 @@
 						</li>
 					</ul>
 				</li>
+				<li>
+					<div class="nav-link active" onclick="Menus.showFindReplace()">Find & Replace</div>
+				</li>
 			</ul>
 		</div>
 	</nav>
 
-	<div id="keieditable" contenteditable="true" onmouseout="Menus.makeMenuReady()"></div>
+	<div id="keieditable" contenteditable="true"></div>
 
 	<div class="modal fade" id="mutableModal" tabindex="-1" role="dialog" aria-hidden="true">
 		<div class="modal-dialog modal-sm" role="document" id="mutableModalDialog">
 			<div class="modal-content bg-light">
-				<div class="modal-header"><h5 class="modal-title" id="mutableModalTitle"></h5></div>
+				<div class="modal-header">
+					<h4 class="modal-title" id="mutableModalTitle"></h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
 				<div class="modal-body" id="mutableModalBody"></div>
 				<div class="modal-footer" id="mutableModalFooter"></div>
 			</div>

@@ -8,7 +8,8 @@
 
 'use strict';
 
-var selection;  // Global Variable to persist selection in document across mouse click and other events
+var selection;  				// Global Variable to persist selection in document across mouse click and other events
+var findReplace;			// Global Variable to enable find and replace functions
 
 window.onload = function() {
 	document.execCommand('defaultParagraphSeparator', false, 'div');
@@ -19,19 +20,21 @@ window.onload = function() {
 
 class Menus {
 	static makeMenuReady() {
-		Menus.markSelection();
-		if (Edit.isCaretInsideTag("table")) {
-			$(".table-dependent-dropdown").removeClass("disabled");
-			$(".table-dependent-item").removeClass("disabled");
-			$(".table-dependent-menu").removeClass("invisible");
-			$(".table-dependent-nav-item").addClass("active");
-			$(".table-dependent-nav-item").removeClass("disabled");
-		} else {
-			$(".table-dependent-dropdown").addClass("disabled");
-			$(".table-dependent-item").addClass("disabled");
-			$(".table-dependent-menu").addClass("invisible");
-			$(".table-dependent-nav-item").addClass("disabled");
-			$(".table-dependent-nav-item").removeClass("active");
+		if (Edit.isCaretInsideAttribute("id", "==", "keieditable")) {
+			Menus.markSelection();
+			if (Edit.isCaretInsideTag("table")) {
+				$(".table-dependent-dropdown").removeClass("disabled");
+				$(".table-dependent-item").removeClass("disabled");
+				$(".table-dependent-menu").removeClass("invisible");
+				$(".table-dependent-nav-item").addClass("active");
+				$(".table-dependent-nav-item").removeClass("disabled");
+			} else {
+				$(".table-dependent-dropdown").addClass("disabled");
+				$(".table-dependent-item").addClass("disabled");
+				$(".table-dependent-menu").addClass("invisible");
+				$(".table-dependent-nav-item").addClass("disabled");
+				$(".table-dependent-nav-item").removeClass("active");
+			}
 		}
 	}
 
@@ -100,15 +103,22 @@ class Menus {
 			handle: ".modal-header"
 		});
 		$('#mutableModal').modal("show");
+		Edit.selectRange(selection);
 	}
 
-	static modalButton(text) {
+	static modalButtonNoDismiss(text, onclick) {
 		let button = document.createElement("button");
 		button.className = "btn btn-primary btn-sm";
-		button.setAttribute("data-dismiss", "modal");
-		button.innerHTML = text;
+		button.setAttribute("onclick", onclick);
+		button.innerHTML = text
 		return button;
 	}
+	static modalButton(text, onclick) {
+		let button = Menus.modalButtonNoDismiss(text, onclick);
+		button.setAttribute("data-dismiss", "modal");
+		return button;
+	}
+
 	static modalNumericSelect(labelText, id, min, max, step, selected, units) {
 		let div = document.createElement("div");
 		div.className = "row";
@@ -162,11 +172,10 @@ class Menus {
 		chosenStyleCell.className = "chosen-style";
 		document.getElementById('mutableModalBody').innerHTML = styleTable.outerHTML;
 
-		document.getElementById('mutableModalFooter').innerHTML = Menus.modalButton("Cancel").outerHTML;
-		let submitButton = Menus.modalButton("Submit");
-		submitButton.setAttribute("onclick", 
-			Menus.constantOnclickStyle(tag, style, "document.getElementById('chosenStyleCell').dataset.value", childGroupTag)); 
-		document.getElementById('mutableModalFooter').appendChild(submitButton);
+		document.getElementById('mutableModalFooter').innerHTML = "";
+		document.getElementById('mutableModalFooter').appendChild(Menus.modalButton("Cancel"));
+		document.getElementById('mutableModalFooter').appendChild(Menus.modalButton("Submit", 
+			Menus.constantOnclickStyle(tag, style, "document.getElementById('chosenStyleCell').dataset.value", childGroupTag)));
 
 		Menus.mutableModalShow();
 		Edit.selectRange(selection);
@@ -281,11 +290,9 @@ class Menus {
 		chosenColorCell.className = "chosen-color";
 		document.getElementById('mutableModalBody').innerHTML = colorTable.outerHTML;
 
-		document.getElementById('mutableModalFooter').innerHTML = Menus.modalButton("Cancel").outerHTML;
-		let submitButton = Menus.modalButton("Submit");
-		submitButton.setAttribute("onclick", 
-			Menus.constantOnclickStyle(tag, style, "document.getElementById('chosenColorCell').style.backgroundColor", childGroupTag)); 
-		document.getElementById('mutableModalFooter').appendChild(submitButton);
+		document.getElementById('mutableModalFooter').innerHTML = "";
+		document.getElementById('mutableModalFooter').appendChild(Menus.modalButton("Submit", 
+			Menus.constantOnclickStyle(tag, style, "document.getElementById('chosenColorCell').style.backgroundColor", childGroupTag)));
 
 		Menus.mutableModalShow();
 		Edit.selectRange(selection);
@@ -299,13 +306,11 @@ class Menus {
 		document.getElementById('mutableModalBody').appendChild(Menus.modalNumericSelect("Rows", "rowsSelect", 1, 20, 1, 3));
 		document.getElementById('mutableModalBody').appendChild(Menus.modalNumericSelect("Column Width", "widthSelect", 2, 40, 2, 2, "cm"));
 
-		document.getElementById('mutableModalFooter').innerHTML = Menus.modalButton("Cancel").outerHTML;
-		let submitButton = Menus.modalButton("Submit");
-		submitButton.setAttribute("onclick",
+		document.getElementById('mutableModalFooter').innerHTML = "";
+		document.getElementById('mutableModalFooter').appendChild(Menus.modalButton("Submit",
 			"Menus.tableInsert(document.getElementById('columnsSelect').value, " +
 				"document.getElementById('rowsSelect').value, " +
-				"document.getElementById('widthSelect').value)");
-		document.getElementById('mutableModalFooter').appendChild(submitButton);
+				"document.getElementById('widthSelect').value)"));
 
 		Menus.mutableModalShow();
 	}
@@ -316,11 +321,9 @@ class Menus {
 		document.getElementById('mutableModalBody').innerHTML = "";
 		document.getElementById('mutableModalBody').appendChild(Menus.modalNumericSelect("Span", "cellSpanSelect", 1, 8, 1, 1));
 
-		document.getElementById('mutableModalFooter').innerHTML = Menus.modalButton("Cancel").outerHTML;
-		let submitButton = Menus.modalButton("Submit");
-		submitButton.setAttribute("onclick", "Menus.tableCellSpan('" + rowOrColumn + 
-				"', document.getElementById('cellSpanSelect').value)");
-		document.getElementById('mutableModalFooter').appendChild(submitButton);
+		document.getElementById('mutableModalFooter').innerHTML = "";
+		document.getElementById('mutableModalFooter').appendChild(Menus.modalButton("Submit", "Menus.tableCellSpan('" + rowOrColumn + 
+				"', document.getElementById('cellSpanSelect').value)"));
 
 		Menus.mutableModalShow();
 	}
@@ -330,17 +333,97 @@ class Menus {
 
 		document.getElementById('mutableModalBody').innerHTML = Menus.modalNumericSelect(labelText, "numericSelect", min, max, step, selected, units).outerHTML;
 
-		document.getElementById('mutableModalFooter').innerHTML = Menus.modalButton("Cancel").outerHTML;
-		let submitButton = Menus.modalButton("Submit");
-		if (childGroupTag) submitButton.setAttribute("onclick", "Menus.elementStyle('" + tag  +"', '" + 
-				style +  
-				"', document.getElementById('numericSelect').value, '" + 
-				childGroupTag +"')");
-		else submitButton.setAttribute("onclick", "Menus.elementStyle('" + tag  +"', '" + 
-				style + 
-				 "', document.getElementById('numericSelect').value)");
-		document.getElementById('mutableModalFooter').appendChild(submitButton);
+		document.getElementById('mutableModalFooter').innerHTML = "";
+		let command;
+		if (childGroupTag) command = "Menus.elementStyle('" + tag  + "', '" +  style + "', document.getElementById('numericSelect').value, '" + childGroupTag +"')";
+		else command =  "Menus.elementStyle('" + tag  +"', '" + style + "', document.getElementById('numericSelect').value)";
+		document.getElementById('mutableModalFooter').appendChild(Menus.modalButton("Submit", command));
 
+		Menus.mutableModalShow();
+	}
+
+	static showFindReplace() {
+		document.getElementById('mutableModalTitle').innerHTML = "Find & Replace";
+		document.getElementById('mutableModalBody').innerHTML = 
+			`<table>
+				<div class="row">
+					<label class="col-sm-4">Find</label>
+					<input type="text" id="target" class="col-sm-8"></input>
+				</div>
+				<div class="row">
+					<label class="col-sm-4";>Replace</label>
+					<input type="text" id="replacement" class="col-sm-8"></input>
+				</div>
+				<div class="row">
+					<label class="col-sm-4"></label>
+					<input type="checkbox" id="matchCase" class="col-sm-1"></input>
+					<label class="col-sm-7">Match Case</label>
+				</div>
+			 </table>`;
+
+		document.getElementById('mutableModalFooter').innerHTML = "";
+		document.getElementById('mutableModalFooter').appendChild(Menus.modalButtonNoDismiss("Find",  "Menus.initializeFindReplace()"));
+		Menus.mutableModalShow();
+	}
+	static initializeFindReplace() {
+		if (document.getElementById("target").value == "") {
+			$('#mutableModal').modal("hide");
+			return;
+		}
+		findReplace = new FindReplace(document.getElementById("target").value, 
+											document.getElementById("replacement").value, 
+											document.getElementById("matchCase").checked);
+		if (findReplace.textIncludesTarget()) {
+		document.getElementById('mutableModalBody').innerHTML = 
+			`<table>
+				<div class="row">
+					<label class="col-sm-5">Find</label>
+					<label class="col-sm-7">` + findReplace.target + `</label>
+				</div>
+				<div class="row">
+					<label class="col-sm-5";>Replace</label>
+					<label class="col-sm-7">` + findReplace.replacement + `</label>
+				</div>
+				<div class="row">
+					<label class="col-sm-5">Match Case</label>
+					<label class="col-sm-7">` + ((findReplace.matchCase) ? 'Yes' : 'No') + `</label>
+				</div>
+			 </table>`;
+
+			document.getElementById('mutableModalFooter').innerHTML = "";
+			document.getElementById('mutableModalFooter').appendChild(Menus.modalButtonNoDismiss("Replace",  "Menus.replace()"));
+			document.getElementById('mutableModalFooter').appendChild(Menus.modalButtonNoDismiss("Replace All",  "Menus.replaceAll()"));
+			document.getElementById('mutableModalFooter').appendChild(Menus.modalButtonNoDismiss("Find Next",  "Menus.find()"));
+			Menus.find();
+		} else Menus.finishFindReplace(); 
+	}
+	static find() {
+		if (findReplace.find()) {
+			selection = findReplace.getSelection();
+			Menus.mutableModalShow();
+		}  else Menus.finishFindReplace();
+	}
+	static replace() {
+		findReplace.replace();
+		Menus.find();
+	}
+	static replaceAll() {
+			findReplace.replaceAll();
+			Menus.finishFindReplace();
+	}
+	static finishFindReplace() {
+		document.getElementById('mutableModalBody').innerHTML = 
+			`<table>
+				<div class="row">
+					<label class="col-sm-5">Find</label>
+					<label class="col-sm-7">` + findReplace.target + `</label>
+				</div>
+				<div class="row">
+					<h6 class="col-sm-12" style="text-align:center">No More Matches</h6>
+				</div>
+			 </table>`;
+		document.getElementById('mutableModalFooter').innerHTML = "";
+		document.getElementById('mutableModalFooter').appendChild(Menus.modalButton("Finish"));
 		Menus.mutableModalShow();
 	}
 }
