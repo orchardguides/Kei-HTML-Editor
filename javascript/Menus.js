@@ -23,18 +23,21 @@ class Menus {
 		if (Edit.isCaretInsideAttribute("id", "==", "keieditable")) {
 			Menus.markSelection();
 			if (Edit.isCaretInsideTag("table")) {
-				$(".table-dependent-dropdown").removeClass("disabled");
-				$(".table-dependent-item").removeClass("disabled");
-				$(".table-dependent-menu").removeClass("invisible");
-				$(".table-dependent-nav-item").addClass("active");
-				$(".table-dependent-nav-item").removeClass("disabled");
+				$(".table-dropdown").removeClass("disabled");
+				$(".table-item").removeClass("disabled");
+				$(".table-menu").removeClass("invisible");
+				$(".table-nav-item").addClass("active");
+				$(".table-nav-item").removeClass("disabled");
 			} else {
-				$(".table-dependent-dropdown").addClass("disabled");
-				$(".table-dependent-item").addClass("disabled");
-				$(".table-dependent-menu").addClass("invisible");
-				$(".table-dependent-nav-item").addClass("disabled");
-				$(".table-dependent-nav-item").removeClass("active");
+				$(".table-dropdown").addClass("disabled");
+				$(".table-item").addClass("disabled");
+				$(".table-menu").addClass("invisible");
+				$(".table-nav-item").addClass("disabled");
+				$(".table-nav-item").removeClass("active");
 			}
+			if (Edit.isCaretInsideTags(["ol", "ul"]))  $(".list-dropdown").removeClass("disabled");
+			else $(".list-dropdown").addClass("disabled");
+
 		}
 	}
 
@@ -182,24 +185,28 @@ class Menus {
 	}
 
 	static fontNames() {
-		return ["Arial", "Arial Black", "Calibri", "Cursive", "Courier New",  "Times New Roman", "Verdana"];
+		return ["Arial", "Arial Black", "Brush Script MT", "Calibri", "Comic Sans MS", "Lucida Console", "Times New Roman"];
+	}
+	static fontFamilies() {
+		return ["Arial, Helvetica, sans-serif", "Arial Black, Gadget, sans-serif", "Brush Script MT, Purisa, cursive, san-serif", 
+				"Calibri, Georgia, serif", "Comic Sans MS, cursive, sans-serif", "Times New Roman, Times, serif"];
 	}
 	static showFontFamilyChooser(tag, childGroupTag) {
 		let style = "fontFamily";
-		let values = Menus.fontNames();
+		let values = Menus.fontFamilies();
 		let title = "Font Family";
 		let descriptions = Menus.fontNames();
 		let styleCellStyle = "fontFamily";
-		let stylCellStyleValues = Menus.fontNames();
+		let stylCellStyleValues = Menus.fontFamilies();
 		Menus.showStyleChooser(tag, style, values, childGroupTag, title, descriptions, styleCellStyle, stylCellStyleValues);
 	}
 	static showTextFontFamilyChooser() {
 		let style = "fontName";
-		let values = Menus.fontNames();
+		let values = Menus.fontFamilies();
 		let title = "Font Family";
 		let descriptions = Menus.fontNames();
 		let styleCellStyle = "fontFamily";
-		let stylCellStyleValues = Menus.fontNames();
+		let stylCellStyleValues = Menus.fontFamilies();
 		Menus.showStyleChooser(null, style, values, null, title, descriptions, styleCellStyle, stylCellStyleValues);
 	}
 
@@ -345,21 +352,21 @@ class Menus {
 	static showFindReplace() {
 		document.getElementById('mutableModalTitle').innerHTML = "Find & Replace";
 		document.getElementById('mutableModalBody').innerHTML = 
-			`<table>
-				<div class="row">
+			`<div>
+				<div class="row mb-1 mr-1">
 					<label class="col-sm-4">Find</label>
-					<input type="text" id="target" class="col-sm-8"></input>
+					<input type="text" id="target" class="col-sm-8 pl-1"></input>
 				</div>
-				<div class="row">
+				<div class="row mb-1 mr-1">
 					<label class="col-sm-4";>Replace</label>
-					<input type="text" id="replacement" class="col-sm-8"></input>
+					<input type="text" id="replacement" class="col-sm-8 pl-1"></input>
 				</div>
-				<div class="row">
+				<div class="row mr-1">
 					<label class="col-sm-4"></label>
 					<input type="checkbox" id="matchCase" class="col-sm-1"></input>
 					<label class="col-sm-7">Match Case</label>
 				</div>
-			 </table>`;
+			 </div>`;
 
 		document.getElementById('mutableModalFooter').innerHTML = "";
 		document.getElementById('mutableModalFooter').appendChild(Menus.modalButtonNoDismiss("Find",  "Menus.initializeFindReplace()"));
@@ -375,7 +382,7 @@ class Menus {
 											document.getElementById("matchCase").checked);
 		if (findReplace.textIncludesTarget()) {
 		document.getElementById('mutableModalBody').innerHTML = 
-			`<table>
+			`<div>
 				<div class="row">
 					<label class="col-sm-5">Find</label>
 					<label class="col-sm-7">` + findReplace.target + `</label>
@@ -388,7 +395,7 @@ class Menus {
 					<label class="col-sm-5">Match Case</label>
 					<label class="col-sm-7">` + ((findReplace.matchCase) ? 'Yes' : 'No') + `</label>
 				</div>
-			 </table>`;
+			 </div>`;
 
 			document.getElementById('mutableModalFooter').innerHTML = "";
 			document.getElementById('mutableModalFooter').appendChild(Menus.modalButtonNoDismiss("Replace",  "Menus.replace()"));
@@ -413,7 +420,7 @@ class Menus {
 	}
 	static finishFindReplace() {
 		document.getElementById('mutableModalBody').innerHTML = 
-			`<table>
+			`<div>
 				<div class="row">
 					<label class="col-sm-5">Find</label>
 					<label class="col-sm-7">` + findReplace.target + `</label>
@@ -421,7 +428,7 @@ class Menus {
 				<div class="row">
 					<h6 class="col-sm-12" style="text-align:center">No More Matches</h6>
 				</div>
-			 </table>`;
+			 </div>`;
 		document.getElementById('mutableModalFooter').innerHTML = "";
 		document.getElementById('mutableModalFooter').appendChild(Menus.modalButton("Finish"));
 		Menus.mutableModalShow();

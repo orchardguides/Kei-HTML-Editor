@@ -46,6 +46,7 @@
 						<li class="dropdown-item" onclick="Menus.execCommand('copy')">Copy</li>
 						<li class="dropdown-item" onclick="Menus.execCommand('undo')">Undo</li>
 						<li class="dropdown-item" onclick="Menus.execCommand('redo')">Redo</li>
+						<li class="dropdown-item" onclick="Menus.showFindReplace()">Find & Replace</li>
 					</ul>
 				</li>
 				<li class="dropdown">
@@ -74,13 +75,21 @@
 					</ul>
 				</li>
 				<li class="dropdown">
+					<div class="nav-link active">Lists</div>
+					<ul class="dropdown-menu multi-level" id="text_menu">
+						<li class="dropdown-item" onclick="Menus.execCommand('insertorderedlist')">Toggle Numbering</li>
+						<li class="dropdown-item" onclick="Menus.execCommand('insertunorderedlist')">Toggle Bullets</li>
+						<li class="dropdown-item disabled list-dropdown" onclick="Menus.showNumericChooser('ul', 'marginBottom', 'Spacing', 'Pixels', 0, 10, 1, 0, 'px', 'li')">Spacing</li>
+					</ul>
+				</li>
+				<li class="dropdown">
 					<div class="nav-link active">Table</div>
 					<ul class="dropdown-menu multi-level" id="table_menu">
 						<li class="dropdown-item" onclick="Menus.showTableInsert()">Insert Table</li>
-						<li class="dropdown-item disabled table-dependent-item" onclick="Menus.tableSplit()">Split Table</li>
+						<li class="dropdown-item disabled table-item" onclick="Menus.tableSplit()">Split Table</li>
 						<li class="dropdown-submenu">
-							<div class="dropdown-item disabled table-dependent-dropdown">Insert  &rarr;</div>
-							<ul class="dropdown-menu invisible table-dependent-menu" id="table_insert_menu">
+							<div class="dropdown-item disabled table-dropdown">Insert  &rarr;</div>
+							<ul class="dropdown-menu invisible table-menu" id="table_insert_menu">
 								<li class="dropdown-item" onclick="Menus.tableInsertElement('col', 'left');">Column Left</li>
 								<li class="dropdown-item" onclick="Menus.tableInsertElement('col', 'right');">Column Right</li>
 								<li class="dropdown-item" onclick="Menus.tableInsertElement('tr', 'above');">Row Above</li>
@@ -92,8 +101,8 @@
 							</ul>
 						</li>
 						<li class="dropdown-submenu">
-							<div class="dropdown-item disabled table-dependent-dropdown">Delete  &rarr;</div>
-							<ul class="dropdown-menu invisible table-dependent-menu" id="table_delete_menu">
+							<div class="dropdown-item disabled table-dropdown">Delete  &rarr;</div>
+							<ul class="dropdown-menu invisible table-menu" id="table_delete_menu">
 								<li class="dropdown-item" onclick="Menus.tableDeleteElement('table');">Table</li>
 								<li class="dropdown-item" onclick="Menus.tableDeleteElement('col');">Column</li>
 								<li class="dropdown-item" onclick="Menus.tableDeleteElement('tr');">Row</li>
@@ -101,16 +110,16 @@
 							</ul>
 						</li>
 						<li class="dropdown-submenu">
-							<div class="dropdown-item disabled table-dependent-dropdown">Justify  &rarr;</div>
-							<ul class="dropdown-menu invisible table-dependent-menu" id="table_justify_menu">
+							<div class="dropdown-item disabled table-dropdown">Justify  &rarr;</div>
+							<ul class="dropdown-menu invisible table-menu" id="table_justify_menu">
 								<li class="dropdown-item" onclick="Menus.tableJustify('left');">Left</li>
 								<li class="dropdown-item" onclick="Menus.tableJustify('center');">Center</li>
 								<li class="dropdown-item" onclick="Menus.tableJustify('right');">Right</li>
 							</ul>
 						</li>
 						<li class="dropdown-submenu">
-							<div class="dropdown-item disabled table-dependent-dropdown">Format  &rarr;</div>
-							<ul class="dropdown-menu invisible table-dependent-menu" id="table_format_menu">
+							<div class="dropdown-item disabled table-dropdown">Format  &rarr;</div>
+							<ul class="dropdown-menu invisible table-menu" id="table_format_menu">
 								<li class="dropdown-item" onclick="Menus.showColorChooser('Background Color', 'table', 'backgroundColor')">Background Color</li>
 								<li class="dropdown-item" onclick="Menus.showColorChooser('Font Color', 'table', 'color')">Font Color</li>
 								<li class="dropdown-item" onclick="Menus.showFontFamilyChooser('table')">Font Family</li>
@@ -119,8 +128,8 @@
 							</ul>
 						</li>
 						<li class="dropdown-submenu">
-							<div class="dropdown-item disabled table-dependent-dropdown">Borders  &rarr;</div>
-							<ul class="dropdown-menu invisible table-dependent-menu" id="table_border_menu">
+							<div class="dropdown-item disabled table-dropdown">Borders  &rarr;</div>
+							<ul class="dropdown-menu invisible table-menu" id="table_border_menu">
 								<li class="dropdown-item" onclick="Menus.showNumericChooser('table', 'borderSpacing', 'Cell Spacing', 'Pixels', 0, 15, 1, 0, 'px')">Cell Spacing</li>
 								<li class="dropdown-item" onclick="Menus.showBorderCollapseChooser('table')">Collapse</li>
 								<li class="dropdown-item" onclick="Menus.showColorChooser('Border Color', 'table', 'borderColor')">Color</li>
@@ -130,8 +139,8 @@
 							</ul>
 						</li>
 						<li class="dropdown-submenu">
-							<div class="dropdown-item disabled table-dependent-dropdown">Cell Format  &rarr;</div>
-							<ul class="dropdown-menu invisible table-dependent-menu" id="table_cells_menu">
+							<div class="dropdown-item disabled table-dropdown">Cell Format  &rarr;</div>
+							<ul class="dropdown-menu invisible table-menu" id="table_cells_menu">
 								<li class="dropdown-item" onclick="Menus.showColorChooser('Background Color', 'table', 'backgroundColor', 'td')">Background Color</li>
 								<li class="dropdown-item" onclick="Menus.showColorChooser('Font Color', 'table', 'color', 'td')">Font Color</li>
 								<li class="dropdown-item" onclick="Menus.showFontFamilyChooser('table', 'td')">Font Family</li>
@@ -141,7 +150,7 @@
 							</ul>
 						</li>
 						<li class="dropdown-submenu">
-							<div class="dropdown-item disabled table-dependent-dropdown">Cell Borders  &rarr;</div>
+							<div class="dropdown-item disabled table-dropdown">Cell Borders  &rarr;</div>
 							<ul class="dropdown-menu" id="table_cells_border_menu">
 								<li class="dropdown-item" onclick="Menus.showColorChooser('Border Color', 'table', 'borderColor', 'td')">Color</li>
 								<li class="dropdown-item" onclick="Menus.showNumericChooser('table', 'borderRadius', 'Border Radius', 'Pixels', 0, 15, 1, 0, 'px', 'td')">Radius</li>
@@ -152,8 +161,8 @@
 					</ul>
 				</li>
 				<li class="dropdown">
-					<div class="nav-link disabled table-dependent-nav-item">Column</div>
-					<ul class="dropdown-menu multi-level invisible table-dependent-menu" id="col_menu">
+					<div class="nav-link disabled table-nav-item">Column</div>
+					<ul class="dropdown-menu multi-level invisible table-menu" id="col_menu">
 						<li class="dropdown-item" onclick="Menus.showNumericChooser('col', 'width', 'Width', 'Pixels', 2, 40, 2, 2, 'cm', 'td')">Width</li>
 						<li class="dropdown-submenu">
 							<div class="dropdown-item">Cell Format  &rarr;</div>
@@ -167,7 +176,7 @@
 							</ul>
 						</li>
 						<li class="dropdown-submenu">
-							<div class="dropdown-item disabled table-dependent-dropdown">Cell Borders  &rarr;</div>
+							<div class="dropdown-item disabled table-dropdown">Cell Borders  &rarr;</div>
 							<ul class="dropdown-menu" id="col_cells_border_menu">
 								<li class="dropdown-item" onclick="Menus.showColorChooser('Border Color', 'col', 'borderColor', 'td')">Color</li>
 								<li class="dropdown-item" onclick="Menus.showNumericChooser('col', 'borderRadius', 'Border Radius', 'Pixels', 0, 15, 1, 0, 'px', 'td')">Radius</li>
@@ -178,8 +187,8 @@
 					</ul>
 				</li>
 				<li class="dropdown">
-					<div class="nav-link disabled table-dependent-nav-item">Row</div>
-					<ul class="dropdown-menu multi-level invisible table-dependent-menu" id="tr_menu">
+					<div class="nav-link disabled table-nav-item">Row</div>
+					<ul class="dropdown-menu multi-level invisible table-menu" id="tr_menu">
 						<li class="dropdown-item" onclick="Menus.showColorChooser('Background Color', 'tr', 'backgroundColor')">Background Color</li>
 						<li class="dropdown-item" onclick="Menus.showColorChooser('Font Color', 'tr', 'color')">Font Color</li>
 						<li class="dropdown-item" onclick="Menus.showFontFamilyChooser('tr')">Font Family</li>
@@ -197,7 +206,7 @@
 								<li class="dropdown-item" onclick="Menus.showVerticalAlignChooser('tr', 'td')">Vertical Alignment</li>
 							</ul>
 						<li class="dropdown-submenu">
-							<div class="dropdown-item disabled table-dependent-dropdown">Cell Borders  &rarr;</div>
+							<div class="dropdown-item disabled table-dropdown">Cell Borders  &rarr;</div>
 							<ul class="dropdown-menu" id="tr_cells_border_menu">
 								<li class="dropdown-item" onclick="Menus.showColorChooser('Border Color', 'tr', 'borderColor', 'td')">Color</li>
 								<li class="dropdown-item" onclick="Menus.showNumericChooser('tr', 'borderRadius', 'Border Radius', 'Pixels', 0, 15, 1, 0, 'px', 'td')">Radius</li>
@@ -208,8 +217,8 @@
 					</ul>
 				</li>
 				<li class="dropdown">
-					<div class="nav-link disabled table-dependent-nav-item">Cell</div>
-					<ul class="dropdown-menu multi-level invisible table-dependent-menu" id="td_menu">
+					<div class="nav-link disabled table-nav-item">Cell</div>
+					<ul class="dropdown-menu multi-level invisible table-menu" id="td_menu">
 						<li class="dropdown-submenu">
 							<div class="dropdown-item">Span  &rarr;</div>
 							<ul class="dropdown-menu">
@@ -233,9 +242,6 @@
 							</ul>
 						</li>
 					</ul>
-				</li>
-				<li>
-					<div class="nav-link active" onclick="Menus.showFindReplace()">Find & Replace</div>
 				</li>
 			</ul>
 		</div>
