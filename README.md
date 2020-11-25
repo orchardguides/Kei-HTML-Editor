@@ -10,3 +10,7 @@ And undo/redo works with everything.
 Improvements to the code base are welcome and encouraged.
 
 A working copy of this editor can be viewed at http://orchardguides.com/KeiEditor/
+
+<p align="center">
+  <img src="KeiEditorDemo.png"/>
+</p>
