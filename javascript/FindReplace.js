@@ -59,9 +59,6 @@ class FindReplace {
 	}
 
 // Find and replace functions
-	textIncludesTarget() {
-		return document.getElementById('keieditable').textContent.includes(this.target);
-	}
 	find() {
 		var textNodes = Edit.getChildTextNodes(document.getElementById('keieditable'));
 		for (this.nodeIndex; this.nodeIndex<textNodes.length; this.nodeIndex++) {

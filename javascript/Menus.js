@@ -245,6 +245,14 @@ class Menus {
 		let descriptions = ["Solid", "Dotted", "Dashed", "None", "Hidden"];
 		Menus.showStyleChooser(tag, style, values, childGroupTag, title, descriptions);
 	}
+	static showLIstStyleChooser(tag, childGroupTag) {
+		let style = "listStyleType";
+		let values = ["disc", "circle", "square", "decimal", "upper-alpha", "lower-alpha", "upper-roman", "lower-roman", "none"];
+		let title = "List Type";
+		let descriptions = ["&#9679;&nbsp;&nbsp;Disc", "&#9675;&nbsp;&nbsp;Circle", "&#9632;&nbsp;&nbsp;Square", "1, 2, 3, 4 ...", 
+			"A, B, C, D ...", "a, b, c, d ...", "I, II, III, IV ...", "i, ii, iii, iv ...", "None"];
+		Menus.showStyleChooser(tag, style, values, childGroupTag, title, descriptions);
+	}
 	static showTextAlignChooser(tag, childGroupTag) {
 		let style = "textAlign";
 		let values = ["left", "center", "right"];
@@ -380,28 +388,29 @@ class Menus {
 		findReplace = new FindReplace(document.getElementById("target").value, 
 											document.getElementById("replacement").value, 
 											document.getElementById("matchCase").checked);
-		if (findReplace.textIncludesTarget()) {
-		document.getElementById('mutableModalBody').innerHTML = 
-			`<div>
-				<div class="row">
-					<label class="col-sm-5">Find</label>
-					<label class="col-sm-7">` + findReplace.target + `</label>
-				</div>
-				<div class="row">
-					<label class="col-sm-5";>Replace</label>
-					<label class="col-sm-7">` + findReplace.replacement + `</label>
-				</div>
-				<div class="row">
-					<label class="col-sm-5">Match Case</label>
-					<label class="col-sm-7">` + ((findReplace.matchCase) ? 'Yes' : 'No') + `</label>
-				</div>
-			 </div>`;
-
+		if (findReplace.find()) {
+			document.getElementById('mutableModalBody').innerHTML = 
+				`<div>
+					<div class="row">
+						<label class="col-sm-5">Find</label>
+						<label class="col-sm-7">` + findReplace.target + `</label>
+					</div>
+					<div class="row">
+						<label class="col-sm-5";>Replace</label>
+						<label class="col-sm-7">` + findReplace.replacement + `</label>
+					</div>
+					<div class="row">
+						<label class="col-sm-5">Match Case</label>
+						<label class="col-sm-7">` + ((findReplace.matchCase) ? 'Yes' : 'No') + `</label>
+					</div>
+			 	</div>`;
 			document.getElementById('mutableModalFooter').innerHTML = "";
 			document.getElementById('mutableModalFooter').appendChild(Menus.modalButtonNoDismiss("Replace",  "Menus.replace()"));
 			document.getElementById('mutableModalFooter').appendChild(Menus.modalButtonNoDismiss("Replace All",  "Menus.replaceAll()"));
 			document.getElementById('mutableModalFooter').appendChild(Menus.modalButtonNoDismiss("Find Next",  "Menus.find()"));
-			Menus.find();
+
+			selection = findReplace.getSelection();
+			Menus.mutableModalShow();
 		} else Menus.finishFindReplace(); 
 	}
 	static find() {
@@ -426,7 +435,7 @@ class Menus {
 					<label class="col-sm-7">` + findReplace.target + `</label>
 				</div>
 				<div class="row">
-					<h6 class="col-sm-12" style="text-align:center">No More Matches</h6>
+					<h6 class="col-sm-12" style="text-align:center">No Matches</h6>
 				</div>
 			 </div>`;
 		document.getElementById('mutableModalFooter').innerHTML = "";

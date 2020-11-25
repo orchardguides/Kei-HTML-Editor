@@ -77,9 +77,10 @@
 				<li class="dropdown">
 					<div class="nav-link active">Lists</div>
 					<ul class="dropdown-menu multi-level" id="text_menu">
-						<li class="dropdown-item" onclick="Menus.execCommand('insertorderedlist')">Toggle Numbering</li>
 						<li class="dropdown-item" onclick="Menus.execCommand('insertunorderedlist')">Toggle Bullets</li>
-						<li class="dropdown-item disabled list-dropdown" onclick="Menus.showNumericChooser('ul', 'marginBottom', 'Spacing', 'Pixels', 0, 10, 1, 0, 'px', 'li')">Spacing</li>
+						<li class="dropdown-item" onclick="Menus.execCommand('insertorderedlist')">Toggle Numbering</li>
+						<li class="dropdown-item disabled list-dropdown" onclick="Menus.showLIstStyleChooser('ol', 'li')">Type</li>
+						<li class="dropdown-item disabled list-dropdown" onclick="Menus.showNumericChooser('ol', 'marginBottom', 'Line Spacing', 'Pixels', 0, 10, 1, 0, 'px', 'li')">Line Spacing</li>
 					</ul>
 				</li>
 				<li class="dropdown">

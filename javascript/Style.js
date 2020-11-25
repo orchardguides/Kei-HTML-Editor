@@ -14,7 +14,7 @@
 class Style {
 	static isStyleSupported(style) {
 		return (['backgroundColor', 'borderCollapse', 'borderColor', 'borderRadius', 'borderStyle', 'borderWidth', 'borderSpacing',
-			'color', 'columnCount', 'fontFamily', 'fontSize', 'marginBottom', 'padding', 'textAlign', 'verticalAlign', 'width']
+			'color', 'columnCount', 'fontFamily', 'fontSize', 'listStyleType', 'marginBottom', 'padding', 'textAlign', 'verticalAlign', 'width']
 			.includes(style));
 	}
 

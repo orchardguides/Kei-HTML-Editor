@@ -129,6 +129,21 @@ class Table {
 			Edit.replaceElement(table, clonedTable); 
 		}
 	}
+	static insertLine(aboveBelow) {
+		var table = Edit.getTagAboveCaret('table');	
+		if ((table) &&(['above','below'].includes(aboveBelow.toLowerCase()))) {
+			let range = document.createRange();
+			if (aboveBelow.toLowerCase() == 'above') {
+				range.setStartBefore(table);
+				range.setEndBefore(table);
+			} else {
+				range.setStartAfter(table);
+				range.setEndAfter(table);
+			}
+			Edit.selectRange(range);
+			Edit.insertHTML('<p></p>');
+		}
+	}
 
 // Function to delete various types of TABLE elements
 	static deleteElement(tag) {
@@ -182,22 +197,6 @@ class Table {
 				else clonedCell.colSpan = span;
 				Edit.replaceElement(cell, clonedCell);
 			}
-		}
-	}
-
-	static insertLine(aboveBelow) {
-		var table = Edit.getTagAboveCaret('table');	
-		if ((table) &&(['above','below'].includes(aboveBelow.toLowerCase()))) {
-			let range = document.createRange();
-			if (aboveBelow.toLowerCase() == 'above') {
-				range.setStartBefore(table);
-				range.setEndBefore(table);
-			} else {
-				range.setStartAfter(table);
-				range.setEndAfter(table);
-			}
-			Edit.selectRange(range);
-			Edit.insertHTML('<p></p>');
 		}
 	}
 }
