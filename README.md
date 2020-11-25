@@ -1,5 +1,5 @@
 # Kei-HTML-Editor
-Pure Javascript HTML Editor. Can be run by downloading the projectand clicking on the index.html file.
+Pure Javascript HTML Editor. Can be run by downloading the project then clicking on the index.html file.
 
 Tested - and working really well - in Chrome, Safari, Edge, and Firefox.
 
