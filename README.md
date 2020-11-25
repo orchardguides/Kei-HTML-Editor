@@ -1,5 +1,7 @@
 # Kei-HTML-Editor
-Pure Javascript HTML Editor Ready to Drop Into Your Web Pages
+Pure Javascript HTML Editor. Can be run by downloading the projectand clicking on the index.html file.
+
+A working copy of this editor can aldo be viewed at http://orchardguides.com/KeiEditor/
 
 Small, but remarkably powerful, this stand-alone word processor was designed to be dropped into web pages with a minimum of effort.
 
@@ -9,7 +11,6 @@ And undo/redo works with everything.
 
 Improvements to the code base are welcome and encouraged.
 
-A working copy of this editor can be viewed at http://orchardguides.com/KeiEditor/
 
 <p align="center">
   <img src="KeiEditorDemo.png"/>
