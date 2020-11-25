@@ -3,7 +3,7 @@ Pure Javascript HTML Editor. Can be run by downloading the project then clicking
 
 Tested - and working really well - in Chrome, Safari, Edge, and Firefox.
 
-A working copy of this editor can aldo be viewed at http://orchardguides.com/KeiEditor/
+A working copy of this editor can also be viewed at http://orchardguides.com/KeiEditor/
 
 Small, but remarkably powerful, this stand-alone word processor was designed to be dropped into web pages with a minimum of effort.
 
