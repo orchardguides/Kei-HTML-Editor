@@ -80,3 +80,13 @@
 	margin-top:20px;
 	width: 100%;
 }
+
+#keieditable {
+	border:solid 3px #d3d3d3;
+	margin-left:1%;
+	margin-right:1%;
+	margin-top:100px;
+	min-height:20rem;
+	padding:10px;
+	width: auto;
+}

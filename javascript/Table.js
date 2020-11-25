@@ -12,6 +12,21 @@
 
 // Collection of static functions to create and manipulate HTML TABLEs
 class Table {
+//  Because this is an editor, styles that normally would be set in css are applied directly to ELEMENTS so the style will carry through save, cut, and paste actions.
+	static initializeTableStyle(table) {
+		table.style.border = 'solid #000000 1px';
+		table.style.borderCollapse = 'separate';
+		table.style.marginLeft = 'auto';
+		table.style.marginRight = 'auto';
+		table.style.width = 'auto';
+	}
+	static initializeCellStyle(cell) {
+		cell.style.border = 'dotted #a9a9a9 1px';
+		cell.style.color = 'inherit';
+		cell.style.minHeight = '1em';
+		cell.style.padding = '5px';
+	}
+
 	static getVisualColumnIndex(cell) {
 		var visualColumnIndex = 0;
 		var rowCells = Edit.getTagAboveNode(cell, 'tr').getElementsByTagName('td');
@@ -24,10 +39,12 @@ class Table {
 
 	static insert(columns, rows, width) {
 		var table = document.createElement('table');
+		Table.initializeTableStyle(table);
 		for (let r=0; r<rows; r++) {
 			let row = table.insertRow(-1);
 			for (let c=0; c<columns; c++) {
 				let cell = document.createElement('td');
+				Table.initializeCellStyle(cell);
 				cell.style.width = width;
 				row.appendChild(cell);
 			}
@@ -141,7 +158,7 @@ class Table {
 				range.setEndAfter(table);
 			}
 			Edit.selectRange(range);
-			Edit.insertHTML('<p></p>');
+			Edit.execCommand('insertparagraph');
 		}
 	}
 

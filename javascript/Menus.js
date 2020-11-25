@@ -435,7 +435,7 @@ class Menus {
 					<label class="col-sm-7">` + findReplace.target + `</label>
 				</div>
 				<div class="row">
-					<h6 class="col-sm-12" style="text-align:center">No Matches</h6>
+					<h6 class="col-sm-12" style="text-align:center">No More Matches</h6>
 				</div>
 			 </div>`;
 		document.getElementById('mutableModalFooter').innerHTML = "";
