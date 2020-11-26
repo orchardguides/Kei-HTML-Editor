@@ -5,7 +5,7 @@ A working copy of this editor can also be viewed at http://orchardguides.com/Kei
 
 The editor can also be run by downloading the project and then clicking on the index.html file.
 
-Tested - and working really well - in Chrome, Safari, Edge, and Firefox.
+Tested - and working really well - in Chrome, Chromium, Safari, Edge, Firefox, and a really old version of the Silk browser.
 
 
 Small, but remarkably powerful, this stand-alone word processor was designed to be dropped into web pages with a minimum of effort.
