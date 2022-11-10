@@ -16,10 +16,29 @@ class Edit {
 		return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&').replace(/\s/g, '\\s');
 	}
 
+//Function to move focus to keieditable
+	static focusInContentEditable() {
+		setTimeout(
+			function() {
+				document.getElementById('keieditable').focus(); 
+			}, 100
+		);
+	}
+
 // Basic HTML tools
-	static getNodeIndex(node, nodes) {
+	static getNodeIndexInArray(node, nodes) {
 		for (let i=0; i<nodes.length; i++) if (node === nodes[i]) return i;
 	}
+	static getNodeIndexInDocument(node) {
+		return Edit.getNodeIndexInArray(node, document.getElementById('keieditable').getElementsByTagName('*'));
+	}
+	static getCaretNodeIndexInDocument() {
+		return Edit.getNodeIndexInDocument(Edit.getNodeAboveCaret());
+	}
+	static putCaretInIndexedNode(nodeIndex) {
+		Edit.selectRangeInNode(document.getElementById('keieditable').getElementsByTagName('*')[nodeIndex],0,0);
+	}
+
 	static cloneAttributes(element, target) {
 		var attributes;
 		if ((attributes = Array.prototype.slice.call(element.attributes)) == undefined) return;
@@ -58,6 +77,7 @@ class Edit {
 // All editing commands are routed through the execCommand function.
 	static execCommand(action, value) {
 		document.execCommand(action, false, value);    //Only place where changes to the Document occur
+		Edit.focusInContentEditable();
 	}
 	static insertHTML(html) {
 		Edit.execCommand('insertHTML', html);
@@ -75,21 +95,24 @@ class Edit {
 	}
 
 //Functions to return parent nodes and information about parent nodes
-	static getTagAboveNode(node, tag) {
+	static getNodeAboveCaret() {
+		return window.getSelection().getRangeAt(0).startContainer;
+	}
+	static getTagNodeAboveNode(node, tag) {
 		while (node) 
 			if ((node.tagName) && (node.tagName.toLowerCase() == tag.toLowerCase())) return node;
 			else node = node.parentElement;
 	}
-	static getTagAboveCaret(tag) {
+	static getTagNodeAboveCaret(tag) {
 		var node = window.getSelection().getRangeAt(0).startContainer;
-		return Edit.getTagAboveNode(node, tag);
+		return Edit.getTagNodeAboveNode(node, tag);
 	}
-	static getTagsAboveCaret(tagArray) {
+	static getTagsNodeAboveCaret(tagArray) {
 		let ancestor;
-		for (let tag of tagArray) if (ancestor = Edit.getTagAboveCaret(tag)) return ancestor;
+		for (let tag of tagArray) if (ancestor = Edit.getTagNodeAboveCaret(tag)) return ancestor;
 	}
 	static isCaretInsideTag(tag) {
-		if (Edit.getTagAboveCaret(tag)) return true;
+		if (Edit.getTagNodeAboveCaret(tag)) return true;
 		return false;
 	}
 	static isCaretInsideTags(tagArray) {
@@ -108,7 +131,7 @@ class Edit {
 		if (eval('element.getAttribute(\"' + attribute + '\") ' + logicalOperator +  ' \"' + value + '\"')) return true;
 		return false;
 	}
-	static getTagWithAttributeAboveCaret(tag, attribute, logicalOperator, value) {
+	static getTagNodeWithAttributeAboveCaret(tag, attribute, logicalOperator, value) {
 		var node = window.getSelection().getRangeAt(0).startContainer;
 		while (node) {
 			if ((node[attribute]) && (node.tagName) && (node.tagName.toLowerCase() == tag.toLowerCase()) && 
@@ -116,9 +139,9 @@ class Edit {
 			else node = node.parentElement;
 		}
 	}
-	static isCaretInsideTagWithAttribute(tag, attribute, logicalOperator, value) {
+	static isCaretInsideTagNodeWithAttribute(tag, attribute, logicalOperator, value) {
 		if (!document.hasFocus()) return false;
-		if (Edit.getTagWithAttributeAboveCaret(tag, attribute, logicalOperator, value)) return true;
+		if (Edit.getTagNodeWithAttributeAboveCaret(tag, attribute, logicalOperator, value)) return true;
 		else return false;
 	}
 	static getParentWithAttributeAboveCaret(attribute, logicalOperator, value) {
@@ -147,7 +170,7 @@ class Edit {
 // HTML ELEMENT replacement functions
 	static replaceElement(element, replacement) {  //Does not work with DIVs
 		if (['tr','td'].includes(element.tagName.toLowerCase())) {
-			let table = Edit.getTagAboveNode(element, 'table');
+			let table = Edit.getTagNodeAboveNode(element, 'table');
 			if (table) {
 				let clonedTable = table.cloneNode(true);
 				let children = table.getElementsByTagName('*');

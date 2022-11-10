@@ -14,7 +14,7 @@
 class Style {
 	static isStyleSupported(style) {
 		return (['backgroundColor', 'borderCollapse', 'borderColor', 'borderRadius', 'borderStyle', 'borderWidth', 'borderSpacing',
-			'color', 'columnCount', 'fontFamily', 'fontSize', 'listStyleType', 'marginBottom', 'padding', 'textAlign', 'verticalAlign', 'width']
+			'color', 'columnCount', 'fontFamily', 'fontSize', 'height', 'listStyleType', 'marginBottom', 'padding', 'textAlign', 'verticalAlign', 'width']
 			.includes(style));
 	}
 
@@ -29,16 +29,16 @@ class Style {
 	}
 
 	static getChildGroupReplaceableElement(tag) {
-		if (tag.toLowerCase() == 'col') return Edit.getTagAboveCaret('table');
-		if (['ul','ol'].includes(tag.toLowerCase())) return Edit.getTagsAboveCaret(['ul', 'ol']);
-		return Edit.getTagAboveCaret(tag);
+		if (tag.toLowerCase() == 'col') return Edit.getTagNodeAboveCaret('table');
+		if (['ul','ol'].includes(tag.toLowerCase())) return Edit.getTagsNodeAboveCaret(['ul', 'ol']);
+		return Edit.getTagNodeAboveCaret(tag);
 	}
 
 	static getStyledChildGroupClone(replaceableElement, tag, style, value, childGroupTag) {
 		var clonedReplaceableElement = replaceableElement.cloneNode(true);
 		var clonedChildren = [];
 		if (tag.toLowerCase() == 'col') {
-			let cell = Edit.getTagAboveCaret('td');
+			let cell = Edit.getTagNodeAboveCaret('td');
 			let visualColumnIndex = Table.getVisualColumnIndex(cell);
 
 			let clonedCells = clonedReplaceableElement.getElementsByTagName('td');
@@ -52,29 +52,31 @@ class Style {
 		return clonedReplaceableElement;
 	}
 
-	static styleChildGroup(tag, style, value, childGroupTag) {
-		var replaceableElement;
-		if (replaceableElement = Style.getChildGroupReplaceableElement(tag))
-			Edit.replaceElement(replaceableElement, 
-					Style.getStyledChildGroupClone(replaceableElement, tag, style, value, childGroupTag));
-	}
-
 	static elementStyle(tag, style, value, childGroupTag) {
-		if (Style.isStyleSupported(style)) {
-			var cell = Edit.getTagAboveCaret('td');
-			var table = Edit.getTagAboveCaret('table');
-			if ((cell) && (table)) var indexOfSelectedCell = Edit.getNodeIndex(cell, table.getElementsByTagName('*')); //Mark cell
+		var caretNodeIndex = Edit.getCaretNodeIndexInDocument();
 
-			if (childGroupTag) Style.styleChildGroup(tag, style, value, childGroupTag)
-			else {
-				let element = Edit.getTagAboveCaret(tag);
-				if (element) Edit.replaceElement(element, Style.getStyledElementClone(element, style, value));
-			}
+		if (childGroupTag) childGroupMultipleStyles(tag, ((Array.isArray(style)) ? style : [style]),  ((Array.isArray(value)) ? value : [value]), childGroupTag);
+		else elementMutipleStyles(tag, ((Array.isArray(style)) ? style : [style]), ((Array.isArray(value)) ? value : [value]));
 
-			if (indexOfSelectedCell) {                                                             //Return caret to marked cell
-				table = Edit.getTagAboveCaret('table');
-				Edit.selectRangeInNode(table.getElementsByTagName('*')[indexOfSelectedCell],0,0);
+		if (caretNodeIndex) Edit.putCaretInIndexedNode(caretNodeIndex);
+
+		function childGroupMultipleStyles(tag, styleArray, valueArray, childGroupTag) {
+			var replaceableElement = Style.getChildGroupReplaceableElement(tag);
+			var clonedReplaceableElement = replaceableElement.cloneNode(true);
+			if (clonedReplaceableElement) {
+				for (let i=0; i<styleArray.length; i++)
+					if (Style.isStyleSupported(styleArray[i]))
+						clonedReplaceableElement = Style.getStyledChildGroupClone(clonedReplaceableElement, tag, styleArray[i], valueArray[i], childGroupTag);
 			}
+			if (replaceableElement.isEqualNode(clonedReplaceableElement) == false) Edit.replaceElement(replaceableElement, clonedReplaceableElement);
+		}
+
+		function elementMutipleStyles(tag, styleArray, valueArray) {
+			var element = Edit.getTagNodeAboveCaret(tag);
+			var clonedElement = element.cloneNode(true);
+			for (let i=0; i<styleArray.length; i++)
+				if (Style.isStyleSupported(styleArray[i])) clonedElement = Style.getStyledElementClone(clonedElement, styleArray[i], valueArray[i]);
+			if (element.isEqualNode(clonedElement) == false) Edit.replaceElement(element, clonedElement);	
 		}
 	}
 }

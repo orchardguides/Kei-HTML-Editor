@@ -8,94 +8,213 @@
 
 'use strict';
 
+// Uses Edit.js, FindReplace.js, Style.js, and Table.js
+
 var selection;  				// Global Variable to persist selection in document across mouse click and other events
-var findReplace;			// Global Variable to enable find and replace functions
+var findReplace;				// Global Variable to enable find and replace functions
+var	highlightedElementTag		// Global Variable to facilitate highlighting selected elements
+var highlightedChildIndex		// Global Variable to facilitate highlighting selected elements
+var highlightedParent			// Global Variable to facilitate highlighting selected elements
 
 window.onload = function() {
-	document.execCommand('defaultParagraphSeparator', false, 'div');
 	document.execCommand('styleWithCSS', false, true);
+	Edit.focusInContentEditable();
 }
 
 //Collection of static functions to create common Bootstrap menus
 
 class Menus {
-	static makeMenuReady() {
-		if (Edit.isCaretInsideAttribute("id", "==", "keieditable")) {
-			Menus.markSelection();
-			if (Edit.isCaretInsideTag("table")) {
-				$(".table-dropdown").removeClass("disabled");
-				$(".table-item").removeClass("disabled");
-				$(".table-menu").removeClass("invisible");
-				$(".table-nav-item").addClass("active");
-				$(".table-nav-item").removeClass("disabled");
-			} else {
-				$(".table-dropdown").addClass("disabled");
-				$(".table-item").addClass("disabled");
-				$(".table-menu").addClass("invisible");
-				$(".table-nav-item").addClass("disabled");
-				$(".table-nav-item").removeClass("active");
-			}
-			if (Edit.isCaretInsideTags(["ol", "ul"]))  $(".list-dropdown").removeClass("disabled");
-			else $(".list-dropdown").addClass("disabled");
-
-		}
-	}
 
 // Static function to persist selection through mouse clicks and other events
 	static markSelection() {
 		selection = window.getSelection().getRangeAt(0);
 	}
 
+// Static funcsions to show and hide menu choices
+	static makeMenuReady() {
+		if (Edit.isCaretInsideAttribute("id", "==", "keieditable")) {
+			Menus.markSelection();
+
+			if (highlightedElementTag) {
+				$(".edit-nav-link").removeClass("active");
+				$(".edit-dropdown-menu").addClass("invisible");
+				$(".text-nav-link").removeClass("active");
+				$(".text-dropdown-menu").addClass("invisible");
+				$(".paragraph-nav-link").removeClass("active");
+				$(".paragraph-dropdown-menu").addClass("invisible");
+				$(".lists-nav-link").removeClass("active");
+				$(".lists-dropdown-menu").addClass("invisible");
+				$(".list-toggle-dropdown-item").addClass("disabled");
+
+				$(".table-insert-dropdown-item").addClass("disabled");
+				$(".table-element-dropdown-menu").removeClass("invisible");
+				$(".table-element-dropdown-item").removeClass("disabled");
+			} else {
+				$(".edit-nav-link").addClass("active");
+				$(".edit-dropdown-menu").removeClass("invisible");
+				$(".text-nav-link").addClass("active");
+				$(".text-dropdown-menu").removeClass("invisible");
+				$(".paragraph-nav-link").addClass("active");
+				$(".paragraph-dropdown-menu").removeClass("invisible");
+				$(".lists-nav-link").addClass("active");
+				$(".lists-dropdown-menu").removeClass("invisible");
+				$(".list-toggle-dropdown-item").removeClass("disabled");
+
+				$(".table-insert-dropdown-item").removeClass("disabled");
+				$(".table-element-dropdown-menu").addClass("invisible");
+				$(".table-element-dropdown-item").addClass("disabled");
+			}
+
+			if ((highlightedElementTag) && (highlightedElementTag.toLowerCase() != "ul")) {
+				$(".lists-nav-link").removeClass("active");
+				$(".lists-dropdown-menu").addClass("invisible");
+			} else {
+				$(".lists-nav-link").addClass("active");
+				$(".lists-dropdown-menu").removeClass("invisible");
+			}
+			if (Edit.isCaretInsideTags(["ol", "ul"])) {
+				$(".list-selected-dropdown-item").removeClass("disabled");
+			} else {
+				$(".list-selected-dropdown-item").addClass("disabled");
+			}
+	
+			if ((highlightedElementTag) && (["table", "col", "tr", "td"].includes(highlightedElementTag.toLowerCase()) == false)) {
+				$(".table-nav-link").removeClass("active");
+				$(".table-dropdown-menu").addClass("invisible");
+			} else {
+				$(".table-nav-link").addClass("active");
+				$(".table-dropdown-menu").removeClass("invisible");
+			}
+
+			if ((Edit.isCaretInsideTag("table") == false) || (highlightedElementTag)) {
+				$(".table-select-dropdown-item").addClass("disabled");
+				$(".table-select-dropdown-menu").addClass("invisible");
+			} else {
+				$(".table-select-dropdown-item").removeClass("disabled");
+				$(".table-select-dropdown-menu").removeClass("invisible");
+			}
+
+			if (highlightedElementTag == 'table') {
+				$(".table-table-nav-link").addClass("active");
+				$(".table-table-dropdown-menu").removeClass("invisible");
+				$(".table-table-dropdown-item").removeClass("disabled");
+			} else {
+				$(".table-table-nav-link").removeClass("active");
+				$(".table-table-dropdown-menu").addClass("invisible");
+				$(".table-table-dropdown-item").addClass("disabled");
+			}
+
+			if (highlightedElementTag == 'col') {
+				$(".table-col-nav-link").addClass("active");
+				$(".table-col-dropdown-menu").removeClass("invisible");
+				$(".table-col-dropdown-item").removeClass("disabled");
+			} else {
+				$(".table-col-nav-link").removeClass("active");
+				$(".table-col-dropdown-menu").addClass("invisible");
+				$(".table-col-dropdown-item").addClass("disabled");
+			}
+
+			if (highlightedElementTag == 'tr') {
+				$(".table-tr-nav-link").addClass("active");
+				$(".table-tr-dropdown-menu").removeClass("invisible");
+				$(".table-tr-dropdown-item").removeClass("disabled");
+			} else {
+				$(".table-tr-nav-link").removeClass("active");
+				$(".table-tr-dropdown-menu").addClass("invisible");
+				$(".table-tr-dropdown-item").addClass("disabled");
+			}
+
+			if (highlightedElementTag == 'td') {
+				$(".table-td-nav-link").addClass("active");
+				$(".table-td-dropdown-menu").removeClass("invisible");
+				$(".table-td-dropdown-item").removeClass("disabled");
+			} else {
+				$(".table-td-nav-link").removeClass("active");
+				$(".table-td-dropdown-menu").addClass("invisible");
+				$(".table-td-dropdown-item").addClass("disabled");
+			}
+		}
+	}
+
+//	Static functions to highlight and dehighlight selected elements
+	static highlightElement(tag) {
+		Edit.selectRange(selection);
+		Menus.deHighlightElement();
+		highlightedElementTag = tag;
+		highlightedChildIndex = Edit.getNodeIndexInDocument(Edit.getTagNodeAboveCaret('td'));
+		highlightedParent = (Edit.getTagNodeAboveCaret('table'));
+
+		if (tag == 'td') Style.elementStyle(tag, ['backgroundColor', 'color'], ['highlight', 'white']);
+		else Style.elementStyle(tag, ['backgroundColor', 'color'], ['highlight', 'white'], 'td');
+		Edit.putCaretInIndexedNode(highlightedChildIndex);
+	}
+	static deHighlightElement() {
+		if (highlightedParent) {
+			Edit.selectRange(selection);
+			Edit.execCommand('undo');
+			Edit.replaceElement(highlightedParent,highlightedParent);
+			Edit.execCommand('undo');
+			Edit.putCaretInIndexedNode(highlightedChildIndex);
+			Menus.markSelection();
+			highlightedElementTag = highlightedChildIndex = highlightedParent = undefined;
+		}
+	}
+
 //  Static functions to execute editing commands
 	static execCommand(action, value) {
+		Menus.deHighlightElement();
 		Edit.selectRange(selection);
 		Edit.execCommand(action, value);
-		Edit.selectRange(selection);
 	}
 	static elementStyle(tag, style, value, childGroupTag) {
+		Menus.deHighlightElement();
 		Edit.selectRange(selection);
 		Style.elementStyle(tag, style, value, childGroupTag);
 	}
 	static tableDeleteElement(tag) {
+		Menus.deHighlightElement();
 		Edit.selectRange(selection);
 		Table.deleteElement(tag);
 	}
 	static tableJustify(alignment) {
+		Menus.deHighlightElement();
 		Edit.selectRange(selection);
 		Table.justify(alignment);
 	}
 	static tableInsert(columns, rows, width) {
+		Menus.deHighlightElement();
 		Edit.selectRange(selection);
 		Table.insert(columns, rows, width);
 	}
 	static tableSplit() {
+		Menus.deHighlightElement();
 		Edit.selectRange(selection);
 		Table.split();
 	}
 	static tableInsertElement(tag, position) {
+		Menus.deHighlightElement();
 		Edit.selectRange(selection);
 		Table.insertElement(tag, position);
 	}
 	static tableCellSpan(rowOrCol, span) {
+		Menus.deHighlightElement();
 		Edit.selectRange(selection);
 		Table.cellSpan(rowOrCol, span);
 	}
 	static tableInsertLine(aboveBelow) {
+		Menus.deHighlightElement();
 		Edit.selectRange(selection);
 		Table.insertLine(aboveBelow);
 	}
+
 
 //  Static function to format editing commands for use as onclick functions
 	static constantOnclickStyle(tag, style, value, childGroupTag) {
 		if (childGroupTag) return "Menus.elementStyle('" + tag + "', '" + style +  "',  " + value + ", '" + childGroupTag + "');";
 		if (tag) return "Menus.elementStyle('" + tag + "', '" + style +  "', " +  value + ");"
-		return  "Menus.execCommand('" + style + "',  " + value + ");"
-	}
-	static variableOnclickStyle(tag, style, childGroupTag) {
-		return Menus.constantOnclickStyle(tag, style, "'*chosenOption*'", childGroupTag);
+		return  "Edit.execCommand('" + style + "',  " + value + ");"
 	}
 
-//  Static functions to display custom Bootstrap Modals
 	static mutableModalShow() {
 		$('#mutableModalDialog').css({
 			left:  ($(window).width() - $("#mutableModalDialog").width())/2,
@@ -166,7 +285,8 @@ class Menus {
 			styleCell.innerHTML = descriptions[i];
 			if (styleCellStyle) {
 				styleCell.style[styleCellStyle] = stylCellStyleValues[i];
-				styleCell.setAttribute("onclick", "Menus.markChosenStyle('" + values[i] + "', '" + descriptions[i] + "', '" + styleCellStyle + "', '" + stylCellStyleValues[i] + "');");
+				styleCell.setAttribute("onclick", "Menus.markChosenStyle('" + values[i] + "', '" + descriptions[i] + "', '" + 
+						styleCellStyle + "', '" + stylCellStyleValues[i] + "');");
 			} else styleCell.setAttribute("onclick", "Menus.markChosenStyle('" + values[i] + "', '" + descriptions[i] + "', '" + "');");
 		}
 		let chosenStyleRow = styleTable.insertRow(-1);
@@ -245,7 +365,7 @@ class Menus {
 		let descriptions = ["Solid", "Dotted", "Dashed", "None", "Hidden"];
 		Menus.showStyleChooser(tag, style, values, childGroupTag, title, descriptions);
 	}
-	static showLIstStyleChooser(tag, childGroupTag) {
+	static showListStyleChooser(tag, childGroupTag) {
 		let style = "listStyleType";
 		let values = ["disc", "circle", "square", "decimal", "upper-alpha", "lower-alpha", "upper-roman", "lower-roman", "none"];
 		let title = "List Type";
@@ -310,7 +430,6 @@ class Menus {
 			Menus.constantOnclickStyle(tag, style, "document.getElementById('chosenColorCell').style.backgroundColor", childGroupTag)));
 
 		Menus.mutableModalShow();
-		Edit.selectRange(selection);
 	}
 
 	static showTableInsert() {
@@ -377,69 +496,7 @@ class Menus {
 			 </div>`;
 
 		document.getElementById('mutableModalFooter').innerHTML = "";
-		document.getElementById('mutableModalFooter').appendChild(Menus.modalButtonNoDismiss("Find",  "Menus.initializeFindReplace()"));
-		Menus.mutableModalShow();
-	}
-	static initializeFindReplace() {
-		if (document.getElementById("target").value == "") {
-			$('#mutableModal').modal("hide");
-			return;
-		}
-		findReplace = new FindReplace(document.getElementById("target").value, 
-											document.getElementById("replacement").value, 
-											document.getElementById("matchCase").checked);
-		if (findReplace.find()) {
-			document.getElementById('mutableModalBody').innerHTML = 
-				`<div>
-					<div class="row">
-						<label class="col-sm-5">Find</label>
-						<label class="col-sm-7">` + findReplace.target + `</label>
-					</div>
-					<div class="row">
-						<label class="col-sm-5";>Replace</label>
-						<label class="col-sm-7">` + findReplace.replacement + `</label>
-					</div>
-					<div class="row">
-						<label class="col-sm-5">Match Case</label>
-						<label class="col-sm-7">` + ((findReplace.matchCase) ? 'Yes' : 'No') + `</label>
-					</div>
-			 	</div>`;
-			document.getElementById('mutableModalFooter').innerHTML = "";
-			document.getElementById('mutableModalFooter').appendChild(Menus.modalButtonNoDismiss("Replace",  "Menus.replace()"));
-			document.getElementById('mutableModalFooter').appendChild(Menus.modalButtonNoDismiss("Replace All",  "Menus.replaceAll()"));
-			document.getElementById('mutableModalFooter').appendChild(Menus.modalButtonNoDismiss("Find Next",  "Menus.find()"));
-
-			selection = findReplace.getSelection();
-			Menus.mutableModalShow();
-		} else Menus.finishFindReplace(); 
-	}
-	static find() {
-		if (findReplace.find()) {
-			selection = findReplace.getSelection();
-			Menus.mutableModalShow();
-		}  else Menus.finishFindReplace();
-	}
-	static replace() {
-		findReplace.replace();
-		Menus.find();
-	}
-	static replaceAll() {
-			findReplace.replaceAll();
-			Menus.finishFindReplace();
-	}
-	static finishFindReplace() {
-		document.getElementById('mutableModalBody').innerHTML = 
-			`<div>
-				<div class="row">
-					<label class="col-sm-5">Find</label>
-					<label class="col-sm-7">` + findReplace.target + `</label>
-				</div>
-				<div class="row">
-					<h6 class="col-sm-12" style="text-align:center">No More Matches</h6>
-				</div>
-			 </div>`;
-		document.getElementById('mutableModalFooter').innerHTML = "";
-		document.getElementById('mutableModalFooter').appendChild(Menus.modalButton("Finish"));
+		document.getElementById('mutableModalFooter').appendChild(Menus.modalButtonNoDismiss("Find",  "FindReplace.initializeFindReplace()"));
 		Menus.mutableModalShow();
 	}
 }

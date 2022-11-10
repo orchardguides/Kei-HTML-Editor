@@ -10,7 +10,7 @@
 
 // Requires Edit.js
 
-// Collection of static functions to create and manipulate HTML TABLEs
+// Collection of static functions to create and manipulate TABLEs
 class Table {
 //  Because this is an editor, styles that normally would be set in css are applied directly to ELEMENTS so the style will carry through save, cut, and paste actions.
 	static initializeTableStyle(table) {
@@ -19,6 +19,9 @@ class Table {
 		table.style.marginLeft = 'auto';
 		table.style.marginRight = 'auto';
 		table.style.width = 'auto';
+	}
+	static initializeRowStyle(row) {
+		row.style.height = '1cm';
 	}
 	static initializeCellStyle(cell) {
 		cell.style.border = 'dotted #a9a9a9 1px';
@@ -29,7 +32,7 @@ class Table {
 
 	static getVisualColumnIndex(cell) {
 		var visualColumnIndex = 0;
-		var rowCells = Edit.getTagAboveNode(cell, 'tr').getElementsByTagName('td');
+		var rowCells = Edit.getTagNodeAboveNode(cell, 'tr').getElementsByTagName('td');
 		for (let rowCell of rowCells) {
 			if (cell == rowCell) return visualColumnIndex;
 			else if (rowCell.colSpan) visualColumnIndex = visualColumnIndex + rowCell.colSpan;
@@ -42,6 +45,7 @@ class Table {
 		Table.initializeTableStyle(table);
 		for (let r=0; r<rows; r++) {
 			let row = table.insertRow(-1);
+			Table.initializeRowStyle(row);
 			for (let c=0; c<columns; c++) {
 				let cell = document.createElement('td');
 				Table.initializeCellStyle(cell);
@@ -53,15 +57,15 @@ class Table {
 	}
 
 	static split() {
-		var table = Edit.getTagAboveCaret('table');
-		var row = Edit.getTagAboveCaret('tr');
+		var table = Edit.getTagNodeAboveCaret('table');
+		var row = Edit.getTagNodeAboveCaret('tr');
 		if ((table) && (row) && (row.rowIndex > 0)) {
 			let clonedTableUpper = table.cloneNode(true);
 			for (let i=row.rowIndex; i<table.rows.length; i++) clonedTableUpper.deleteRow(row.rowIndex);
 			let clonedTableLower = table.cloneNode(true);
 			for (let i=0; i<row.rowIndex; i++) clonedTableLower.deleteRow(0);
 			Edit.selectNode(table);
-			Edit.insertHTML(clonedTableUpper.outerHTML + '<br>' + clonedTableLower.outerHTML);
+			Edit.insertHTML(clonedTableUpper.outerHTML + '<div>&nbsp;</div>' + clonedTableLower.outerHTML);
 		}
 	}
 
@@ -71,9 +75,9 @@ class Table {
 		else if (tag.toLowerCase() == 'td') Table.insertCell(position);
 	}
 	static insertColumn(leftOrRight) {
-		var cell = Edit.getTagAboveCaret('td');
-		var row = Edit.getTagAboveCaret('tr');
-		var table = Edit.getTagAboveCaret('table');
+		var cell = Edit.getTagNodeAboveCaret('td');
+		var row = Edit.getTagNodeAboveCaret('tr');
+		var table = Edit.getTagNodeAboveCaret('table');
 		if ((cell) && (row) && (table)) {
 			let visualColumnIndex = Table.getVisualColumnIndex(cell);
 
@@ -83,7 +87,7 @@ class Table {
 				let clonedCells = clonedRow.getElementsByTagName('td');
 				for (let clonedCell of clonedCells) {
 					if (visualColumnIndex == Table.getVisualColumnIndex(clonedCell)) {
-						let columnIndex = Edit.getNodeIndex(clonedCell, clonedRow.getElementsByTagName('td'));
+						let columnIndex = Edit.getNodeIndexInArray(clonedCell, clonedRow.getElementsByTagName('td'));
 						let newCell;
 						if (leftOrRight == 'left') newCell = clonedRow.insertCell(columnIndex);
 						else newCell = clonedRow.insertCell(columnIndex+1);
@@ -96,8 +100,8 @@ class Table {
 		}
 	}
 	static insertRow(aboveOrBelow) {
-		var targetRow = Edit.getTagAboveCaret('tr');
-		var table = Edit.getTagAboveCaret('table');
+		var targetRow = Edit.getTagNodeAboveCaret('tr');
+		var table = Edit.getTagNodeAboveCaret('table');
 
 		if ((targetRow) && (table)) {
 			let clonedRow = document.createElement('tr');
@@ -119,9 +123,9 @@ class Table {
 		}
 	}
 	static insertCell(leftOrRight) {
-		let targetCell = Edit.getTagAboveCaret('td');
-		let targetRow = Edit.getTagAboveCaret('tr');
-		let table = Edit.getTagAboveCaret('table');
+		let targetCell = Edit.getTagNodeAboveCaret('td');
+		let targetRow = Edit.getTagNodeAboveCaret('tr');
+		let table = Edit.getTagNodeAboveCaret('table');
 	
 		if ((targetCell) && (targetRow) && (table)) {
 			let clonedTable = document.createElement('table');
@@ -147,7 +151,7 @@ class Table {
 		}
 	}
 	static insertLine(aboveBelow) {
-		var table = Edit.getTagAboveCaret('table');	
+		var table = Edit.getTagNodeAboveCaret('table');	
 		if ((table) &&(['above','below'].includes(aboveBelow.toLowerCase()))) {
 			let range = document.createRange();
 			if (aboveBelow.toLowerCase() == 'above') {
@@ -165,8 +169,8 @@ class Table {
 // Function to delete various types of TABLE elements
 	static deleteElement(tag) {
 		if (tag.toLowerCase() == 'col') {
-			let cell = Edit.getTagAboveCaret('td');
-			let table = Edit.getTagAboveCaret('table');
+			let cell = Edit.getTagNodeAboveCaret('td');
+			let table = Edit.getTagNodeAboveCaret('table');
 			if ((cell) && (table)) {
 				let visualColumnIndex = Table.getVisualColumnIndex(cell);
 
@@ -178,23 +182,23 @@ class Table {
 			}
 		}
 		else if (tag.toLowerCase() == 'td') {
-			let cell = Edit.getTagAboveCaret('td');
+			let cell = Edit.getTagNodeAboveCaret('td');
 			if (cell) {
 				let parent = cell.parentElement;
-				let childIndex = Edit.getNodeIndex(cell, parent.childNodes);
+				let childIndex = Edit.getNodeIndexInArray(cell, parent.childNodes);
 				let clonedParent = parent.cloneNode(true);
 				clonedParent.removeChild(clonedParent.childNodes[childIndex]);
 				Edit.replaceElement(parent, clonedParent);
 			}
 		}
 		else {
-			let element = Edit.getTagAboveCaret(tag);
+			let element = Edit.getTagNodeAboveCaret(tag);
 			if (element) Edit.deleteNode(element);
 		}
 	}
 
 	static justify(justify) {
-		var table = Edit.getTagAboveCaret('table');
+		var table = Edit.getTagNodeAboveCaret('table');
 		if (table) {
 			let clonedTable = table.cloneNode(true);
 			if (justify == 'right') clonedTable.style.marginRight = '0%';
@@ -207,7 +211,7 @@ class Table {
 
 	static cellSpan(rowOrCol, span) {
 		if ((['row', 'col'].includes(rowOrCol)) && (span > 0)) {
-			var cell = Edit.getTagAboveCaret('td');
+			var cell = Edit.getTagNodeAboveCaret('td');
 			if (cell) {
 				var clonedCell = cell.cloneNode(true);
 				if (rowOrCol == 'row') clonedCell.rowSpan = span;
