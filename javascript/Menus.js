@@ -20,6 +20,9 @@ window.onload = function() {
 	document.execCommand('styleWithCSS', false, true);
 	Edit.focusInContentEditable();
 }
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
 
 //Collection of static functions to create common Bootstrap menus
 
@@ -36,102 +39,67 @@ class Menus {
 			Menus.markSelection();
 
 			if (highlightedElementTag) {
-				$(".edit-nav-link").removeClass("active");
 				$(".edit-dropdown-menu").addClass("invisible");
-				$(".text-nav-link").removeClass("active");
 				$(".text-dropdown-menu").addClass("invisible");
-				$(".paragraph-nav-link").removeClass("active");
-				$(".paragraph-dropdown-menu").addClass("invisible");
-				$(".lists-nav-link").removeClass("active");
 				$(".lists-dropdown-menu").addClass("invisible");
-				$(".list-toggle-dropdown-item").addClass("disabled");
-
-				$(".table-insert-dropdown-item").addClass("disabled");
-				$(".table-element-dropdown-menu").removeClass("invisible");
-				$(".table-element-dropdown-item").removeClass("disabled");
+				$(".selection-dropdown-menu").removeClass("invisible");
 			} else {
-				$(".edit-nav-link").addClass("active");
 				$(".edit-dropdown-menu").removeClass("invisible");
-				$(".text-nav-link").addClass("active");
 				$(".text-dropdown-menu").removeClass("invisible");
-				$(".paragraph-nav-link").addClass("active");
-				$(".paragraph-dropdown-menu").removeClass("invisible");
-				$(".lists-nav-link").addClass("active");
 				$(".lists-dropdown-menu").removeClass("invisible");
-				$(".list-toggle-dropdown-item").removeClass("disabled");
-
-				$(".table-insert-dropdown-item").removeClass("disabled");
-				$(".table-element-dropdown-menu").addClass("invisible");
-				$(".table-element-dropdown-item").addClass("disabled");
+				$(".selection-dropdown-menu").addClass("invisible");
 			}
 
-			if ((highlightedElementTag) && (highlightedElementTag.toLowerCase() != "ul")) {
-				$(".lists-nav-link").removeClass("active");
-				$(".lists-dropdown-menu").addClass("invisible");
-			} else {
-				$(".lists-nav-link").addClass("active");
-				$(".lists-dropdown-menu").removeClass("invisible");
-			}
 			if (Edit.isCaretInsideTags(["ol", "ul"])) {
-				$(".list-selected-dropdown-item").removeClass("disabled");
+				$(".list-only-dropdown-item").removeClass("d-none");
+				$(".list-only-menu-item").removeClass("d-none");
 			} else {
-				$(".list-selected-dropdown-item").addClass("disabled");
-			}
-	
-			if ((highlightedElementTag) && (["table", "col", "tr", "td"].includes(highlightedElementTag.toLowerCase()) == false)) {
-				$(".table-nav-link").removeClass("active");
-				$(".table-dropdown-menu").addClass("invisible");
-			} else {
-				$(".table-nav-link").addClass("active");
-				$(".table-dropdown-menu").removeClass("invisible");
+				$(".list-only-dropdown-item").addClass("d-none");
+				$(".list-only-menu-item").addClass("d-none");
 			}
 
-			if ((Edit.isCaretInsideTag("table") == false) || (highlightedElementTag)) {
-				$(".table-select-dropdown-item").addClass("disabled");
-				$(".table-select-dropdown-menu").addClass("invisible");
+			if ((Edit.isCaretInsideTags(["ol", "ul"])) || (highlightedElementTag)) {
+				$(".paragraph-dropdown-menu").addClass("invisible");
+				$(".table-insert-dropdown-item").addClass("d-none");
 			} else {
-				$(".table-select-dropdown-item").removeClass("disabled");
-				$(".table-select-dropdown-menu").removeClass("invisible");
+				$(".table-insert-dropdown-item").removeClass("d-none");
+				$(".paragraph-dropdown-menu").removeClass("invisible");
+			}
+
+			if (Edit.isCaretInsideTags(["table","ol", "ul"])) {
+				$(".table-insert-dropdown-item").addClass("d-none");
+			} else {
+				$(".table-insert-dropdown-item").removeClass("d-none");
+			}
+
+			if (Edit.isCaretInsideTag("table")) {
+				$(".table-select-dropdown-item").removeClass("d-none");
+			} else {
+				$(".table-select-dropdown-item").addClass("d-none");
 			}
 
 			if (highlightedElementTag == 'table') {
-				$(".table-table-nav-link").addClass("active");
-				$(".table-table-dropdown-menu").removeClass("invisible");
-				$(".table-table-dropdown-item").removeClass("disabled");
+				$(".table-only-dropdown-item").removeClass("d-none");
 			} else {
-				$(".table-table-nav-link").removeClass("active");
-				$(".table-table-dropdown-menu").addClass("invisible");
-				$(".table-table-dropdown-item").addClass("disabled");
+				$(".table-only-dropdown-item").addClass("d-none");
 			}
 
 			if (highlightedElementTag == 'col') {
-				$(".table-col-nav-link").addClass("active");
-				$(".table-col-dropdown-menu").removeClass("invisible");
-				$(".table-col-dropdown-item").removeClass("disabled");
+				$(".column-only-dropdown-item").removeClass("d-none");
 			} else {
-				$(".table-col-nav-link").removeClass("active");
-				$(".table-col-dropdown-menu").addClass("invisible");
-				$(".table-col-dropdown-item").addClass("disabled");
+				$(".column-only-dropdown-item").addClass("d-none");
 			}
 
 			if (highlightedElementTag == 'tr') {
-				$(".table-tr-nav-link").addClass("active");
-				$(".table-tr-dropdown-menu").removeClass("invisible");
-				$(".table-tr-dropdown-item").removeClass("disabled");
+				$(".row-only-dropdown-item").removeClass("d-none");
 			} else {
-				$(".table-tr-nav-link").removeClass("active");
-				$(".table-tr-dropdown-menu").addClass("invisible");
-				$(".table-tr-dropdown-item").addClass("disabled");
+				$(".row-only-dropdown-item").addClass("d-none");
 			}
 
 			if (highlightedElementTag == 'td') {
-				$(".table-td-nav-link").addClass("active");
-				$(".table-td-dropdown-menu").removeClass("invisible");
-				$(".table-td-dropdown-item").removeClass("disabled");
+				$(".cell-only-dropdown-item").removeClass("d-none");
 			} else {
-				$(".table-td-nav-link").removeClass("active");
-				$(".table-td-dropdown-menu").addClass("invisible");
-				$(".table-td-dropdown-item").addClass("disabled");
+				$(".cell-only-dropdown-item").addClass("d-none");
 			}
 		}
 	}
@@ -272,7 +240,7 @@ class Menus {
 		Edit.selectRange(selection);
 	}
 
-	static showStyleChooser(tag, style, values, childGroupTag, title, descriptions, styleCellStyle, stylCellStyleValues) {
+	static showStyleChooser(tag, style, values, childGroupTag, title, descriptions, styleCellStyle, styleCellStyleValues) {
 		document.getElementById('mutableModalTitle').innerHTML = title;
 
 		let styleTable = document.createElement("table");
@@ -284,9 +252,9 @@ class Menus {
 			styleCell.className = "style-option";
 			styleCell.innerHTML = descriptions[i];
 			if (styleCellStyle) {
-				styleCell.style[styleCellStyle] = stylCellStyleValues[i];
+				styleCell.style[styleCellStyle] = styleCellStyleValues[i];
 				styleCell.setAttribute("onclick", "Menus.markChosenStyle('" + values[i] + "', '" + descriptions[i] + "', '" + 
-						styleCellStyle + "', '" + stylCellStyleValues[i] + "');");
+						styleCellStyle + "', '" + styleCellStyleValues[i] + "');");
 			} else styleCell.setAttribute("onclick", "Menus.markChosenStyle('" + values[i] + "', '" + descriptions[i] + "', '" + "');");
 		}
 		let chosenStyleRow = styleTable.insertRow(-1);
@@ -317,8 +285,8 @@ class Menus {
 		let title = "Font Family";
 		let descriptions = Menus.fontNames();
 		let styleCellStyle = "fontFamily";
-		let stylCellStyleValues = Menus.fontFamilies();
-		Menus.showStyleChooser(tag, style, values, childGroupTag, title, descriptions, styleCellStyle, stylCellStyleValues);
+		let styleCellStyleValues = Menus.fontFamilies();
+		Menus.showStyleChooser(tag, style, values, childGroupTag, title, descriptions, styleCellStyle, styleCellStyleValues);
 	}
 	static showTextFontFamilyChooser() {
 		let style = "fontName";
@@ -326,8 +294,8 @@ class Menus {
 		let title = "Font Family";
 		let descriptions = Menus.fontNames();
 		let styleCellStyle = "fontFamily";
-		let stylCellStyleValues = Menus.fontFamilies();
-		Menus.showStyleChooser(null, style, values, null, title, descriptions, styleCellStyle, stylCellStyleValues);
+		let styleCellStyleValues = Menus.fontFamilies();
+		Menus.showStyleChooser(null, style, values, null, title, descriptions, styleCellStyle, styleCellStyleValues);
 	}
 
 	static fontSizes() {
@@ -339,8 +307,8 @@ class Menus {
 		let title = "Font Size";
 		let descriptions = Menus.fontSizes();
 		let styleCellStyle = "fontSize";
-		let stylCellStyleValues = Menus.fontSizes();
-		Menus.showStyleChooser(tag, style, values, childGroupTag, title, descriptions, styleCellStyle, stylCellStyleValues);
+		let styleCellStyleValues = Menus.fontSizes();
+		Menus.showStyleChooser(tag, style, values, childGroupTag, title, descriptions, styleCellStyle, styleCellStyleValues);
 	}
 	static showTextFontSizeChooser() {
 		let style = "fontSize";
@@ -348,8 +316,8 @@ class Menus {
 		let title = "Font Size";
 		let descriptions = Menus.fontSizes();
 		let styleCellStyle = "fontSize";
-		let stylCellStyleValues = Menus.fontSizes();
-		Menus.showStyleChooser(null, style, values, null, title, descriptions, styleCellStyle, stylCellStyleValues);
+		let styleCellStyleValues = Menus.fontSizes();
+		Menus.showStyleChooser(null, style, values, null, title, descriptions, styleCellStyle, styleCellStyleValues);
 	}
 	static showBorderCollapseChooser(tag, childGroupTag) {
 		let style = "borderCollapse";
@@ -497,6 +465,14 @@ class Menus {
 
 		document.getElementById('mutableModalFooter').innerHTML = "";
 		document.getElementById('mutableModalFooter').appendChild(Menus.modalButtonNoDismiss("Find",  "FindReplace.initializeFindReplace()"));
+		Menus.mutableModalShow();
+	}
+
+	static showMessageLinkModal(title, link) {
+		document.getElementById('mutableModalTitle').innerHTML = title;
+		document.getElementById('mutableModalBody').innerHTML = "<embed type='text/html' src='" + link + "'>";
+		document.getElementById('mutableModalFooter').innerHTML = "";
+		document.getElementById('mutableModalFooter').appendChild(Menus.modalButton("Okay"));
 		Menus.mutableModalShow();
 	}
 }

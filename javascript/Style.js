@@ -47,12 +47,19 @@ class Style {
 					if (visualColumnIndex == Table.getVisualColumnIndex(clonedCell)) clonedChildren.push(clonedCell);
 			}
 		} else clonedChildren = clonedReplaceableElement.getElementsByTagName(childGroupTag);
+		if (childGroupTag.toLowerCase() == 'li') {
+			for (let clonedChild of clonedChildren) {
+				clonedChild.innerHTML = clonedChild.innerHTML.replace('<br>', '');
+				clonedChild.innerHTML = clonedChild.innerHTML.replace('<BR>', '');
+			}
+		}
 
 		for (let i=0; i<clonedChildren.length; i++) Style.styleElement(clonedChildren[i], style, value);
 		return clonedReplaceableElement;
 	}
 
 	static elementStyle(tag, style, value, childGroupTag) {
+		if (tag.toLowerCase() == 'td') childGroupTag = null;
 		var caretNodeIndex = Edit.getCaretNodeIndexInDocument();
 
 		if (childGroupTag) childGroupMultipleStyles(tag, ((Array.isArray(style)) ? style : [style]),  ((Array.isArray(value)) ? value : [value]), childGroupTag);
@@ -61,14 +68,14 @@ class Style {
 		if (caretNodeIndex) Edit.putCaretInIndexedNode(caretNodeIndex);
 
 		function childGroupMultipleStyles(tag, styleArray, valueArray, childGroupTag) {
-			var replaceableElement = Style.getChildGroupReplaceableElement(tag);
-			var clonedReplaceableElement = replaceableElement.cloneNode(true);
+			let replaceableElement = Style.getChildGroupReplaceableElement(tag);
+			let clonedReplaceableElement = replaceableElement.cloneNode(true);
 			if (clonedReplaceableElement) {
 				for (let i=0; i<styleArray.length; i++)
 					if (Style.isStyleSupported(styleArray[i]))
 						clonedReplaceableElement = Style.getStyledChildGroupClone(clonedReplaceableElement, tag, styleArray[i], valueArray[i], childGroupTag);
+				if (replaceableElement.isEqualNode(clonedReplaceableElement) == false) Edit.replaceElement(replaceableElement, clonedReplaceableElement);
 			}
-			if (replaceableElement.isEqualNode(clonedReplaceableElement) == false) Edit.replaceElement(replaceableElement, clonedReplaceableElement);
 		}
 
 		function elementMutipleStyles(tag, styleArray, valueArray) {
