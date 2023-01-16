@@ -10,7 +10,16 @@
 	cursor:default;
 }
 
+
+.dropdown-header {
+	color:blue;
+	font-weight:bold;
+}
+.dropdown-item {
+	text-align:center;
+}
 .dropdown-menu {
+	margin-left: -85px;
 	margin-top: -8px;
 	padding:0px;
 }
@@ -19,12 +28,11 @@
 }
 .dropdown-submenu {
 	position: relative;
-	width:auto;
+	width:30px;
 }
 .dropdown-submenu>.dropdown-menu {
 	border-radius: 0px;
 	left: 100%;
-	margin-left: -100px;
 	margin-top: -20px;
 	padding:0px;
 	top: 0;
@@ -38,7 +46,7 @@
 }
 .modal-dialog {
 	margin-left: 0px;
-	width: 300px;
+	width: 325px;
 }
 .modal-header {
 	cursor: move;
