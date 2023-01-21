@@ -21,8 +21,8 @@ window.onload = function() {
 	Edit.focusInContentEditable();
 }
 $(function () {
-  $('[data-toggle="tooltip"]').tooltip()
-})
+  $('[data-toggle="tooltip"]').tooltip();
+});
 
 //Collection of static functions to create common Bootstrap menus
 
@@ -33,7 +33,7 @@ class Menus {
 		selection = window.getSelection().getRangeAt(0);
 	}
 
-// Static funcsions to show and hide menu choices
+// Static functions to show and hide menu choices
 	static makeMenuReady() {
 		if (Edit.isCaretInsideAttribute("id", "==", "keieditable")) {
 			Menus.markSelection();

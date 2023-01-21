@@ -102,16 +102,16 @@ class FindReplace {
 			document.getElementById('mutableModalBody').innerHTML = 
 				`<div>
 					<div class="row">
-						<label class="col-sm-5">Find</label>
-						<label class="col-sm-7">` + findReplace.target + `</label>
+						<span class="col-sm-5">Find</span>
+						<span class="col-sm-7">` + findReplace.target + `</span>
 					</div>
 					<div class="row">
-						<label class="col-sm-5";>Replace</label>
-						<label class="col-sm-7">` + findReplace.replacement + `</label>
+						<span class="col-sm-5";>Replace With</span>
+						<span class="col-sm-7">` + findReplace.replacement + `</span>
 					</div>
 					<div class="row">
-						<label class="col-sm-5">Match Case</label>
-						<label class="col-sm-7">` + ((findReplace.matchCase) ? 'Yes' : 'No') + `</label>
+						<span class="col-sm-5">Match Case</span>
+						<span class="col-sm-7">` + ((findReplace.matchCase) ? 'Yes' : 'No') + `</span>
 					</div>
 			 	</div>`;
 			document.getElementById('mutableModalFooter').innerHTML = "";
