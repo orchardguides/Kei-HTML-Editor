@@ -1,374 +1,356 @@
-<!DOCTYPE html>
-<!--Copyright (c) 2020 by Kei G. Gauthier, Longmeadow, MA, USA
-*
-* This software is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
-*
-* You should have received a copy of the license along with this
-* work.  If not, see <http://creativecommons.org/licenses/by-nc-sa/3.0/>.-->
-<html>
-
 <head>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<script src="https://code.jquery.com/jquery-3.5.1.min.js"
-			integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
-			crossorigin="anonymous"></script>
-	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
-			integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
-			crossorigin="anonymous"></script>
-
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
-			integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2"
-			crossorigin="anonymous">
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
-			integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
-			crossorigin="anonymous"></script>
-
-	<link rel="stylesheet" href="./css/KeiEditorMenu.css">
-
-	<script src='./javascript/Edit.js'></script>
-	<script src='./javascript/Menus.js'></script>
-	<script src='./javascript/FindReplace.js'></script>
-	<script src='./javascript/Style.js'></script>
-	<script src='./javascript/Table.js'></script>
+		<script src="https://code.jquery.com/jquery-3.5.1.min.js"
+			integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+			integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+			integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+		<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+			integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"
+			integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+" crossorigin="anonymous"></script>
+        
+        <link rel="stylesheet" href="./css/KeiEditorMenu.css">
+		<script src='./javascript/Edit.js'></script>
+		<script src='./javascript/Menus.js'></script>
+		<script src='./javascript/FindReplace.js'></script>
+		<script src='./javascript/Style.js'></script>
+		<script src='./javascript/Table.js'></script>
 </head>
 
 <body>
-	<nav class="navbar navbar-dark bg-dark fixed-top navbar-expand-sm" role="navigation" onmousemove="Menus.makeMenuReady()">
-		<div class="navbar-brand"><span class="text-primary"><b>Kei<BR>Editor</b></span></div>
-		<div class="collapse navbar-collapse">
-			<ul class="nav navbar-nav">
-				<li class="dropdown">
-					<div class="nav-link"><img src="./icons/FatCow/kei_edit_button.png" alt="Icon"/></div>
-					<ul class="dropdown-menu edit-dropdown-menu">
-						<li class="dropdown-item">
-							<div class="dropdown-item dropdown-header">EDIT</div>
-							<span class="menu-item" onclick="Menus.execCommand('cut')">
-								<img src="./icons/FatCow/kei_cut_red.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Cut"/>
-							</span>
-							<span class="menu-item" onclick="Menus.execCommand('copy')">
-								<img src="./icons/gtk/kei_edit-copy.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Copy"/>
-							</span>
-							<span class="menu-item" onclick="Menus.execCommand('undo')">
-								<img src="./icons/FatCow/kei_undo.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Undo"/>
-							</span>
-							<span class="menu-item" onclick="Menus.execCommand('redo')">
-								<img src="./icons/FatCow/kei_redo.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Redo"/>
-							</span>
-							<span class="menu-item" onclick="Menus.showFindReplace()">
-								<img src="./icons/FatCow/kei_find.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Find and Replace"/>
-							</span>
-						</li>
-					</ul>
-				</li>
-				<li class="dropdown">
-					<div class="nav-link"><img src="./icons/FatCow/kei_font.png" alt="Icon"/></div>
-					<ul class="dropdown-menu text-dropdown-menu"">
-						<li class="dropdown-item">
-							<div class="dropdown-item dropdown-header">FONT</div>
-							<span class="menu-item" onclick="Menus.showTextFontFamilyChooser()">
-								<img src="./icons/kei/kei_font_chooser.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Font Family"/>
-							</span>
-							<span class="menu-item" onclick="Menus.showTextFontSizeChooser()">
-								<img src="./icons/kei/kei_font_size.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Size"/>
-							</span>
-							<span class="menu-item" onclick="Menus.showTextColorChooser('Font Color', 'forecolor')">
-								<img src="./icons/kei/kei_font_color_chooser.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Color"/>
-							</span>				
-							<span class="menu-item" onclick="Menus.showTextColorChooser('Highlight Color', 'hilitecolor')">
-								<img src="./icons/FatCow/kei_highlighter_text.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Highlight"/>
-							</span>
-							<span class="menu-item" onclick="Menus.execCommand('removeformat')">
-								<img src="./icons/gtk/kei_edit-clear.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Clear Formatting"/>
-							</span>
-						</li>
-						<li class="dropdown-item">
-							<div class="dropdown-item dropdown-header">DECORATIONS</div>
-							<span class="menu-item" onclick="Menus.execCommand('bold')">
-								<img src="./icons/FatCow/text_bold.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Toggle Bold"/>
-							</span>
-							<span class="menu-item" onclick="Menus.execCommand('italic')">
-								<img src="./icons/FatCow/text_italic.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Toggle Italic"/>
-							</span>	
-							<span class="menu-item" onclick="Menus.execCommand('underline')">
-								<img src="./icons/FatCow/text_underline.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Toggle Underline"/>
-							</span>
-							<span class="menu-item" onclick="Menus.execCommand('strikethrough')">
-								<img src="./icons/FatCow/text_strikethrough.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Toggle Strinethrough"/>
-							</span>
-							<span class="menu-item" onclick="Menus.execCommand('subscript')">
-								<img src="./icons/FatCow/text_subscript.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Subscript"/>
-							</span>
-							<span class="menu-item" onclick="Menus.execCommand('superscript')">
-								<img src="./icons/FatCow/text_superscript.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Superscript"/>
-							</span>
-						</li>
+	<div id="viewport">
 
-					</ul>
-				</li>
-
-				<li class="dropdown">
-					<div class="nav-link"><img src="./icons/FatCow/text.png" alt="Icon""/></div>
-					<ul class="dropdown-menu paragraph-dropdown-menu"">
-						<li class="dropdown-item">
-							<div class="dropdown-item dropdown-header">JUSTIFY</div>
-							<span class="menu-item" onclick="Menus.execCommand('justifyleft')">
-								<img src="./icons/FatCow/text_align_left.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Left"/>
-							</span>
-							<span class="menu-item" onclick="Menus.execCommand('justifyright')">
-								<img src="./icons/FatCow/text_align_right.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Right"/>
-							</span>
-							<span class="menu-item" onclick="Menus.execCommand('justifycenter')">
-								<img src="./icons/FatCow//text_align_center.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Center"/>
-							</span>
-							<span class="menu-item" onclick="Menus.execCommand('justifyfull')">
-								<img src="./icons/FatCow/text_align_justify.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Fill"/>
-							</span>
-						</li>
-						<li class="dropdown-item">
-							<div class="dropdown-item dropdown-header">INDENT</div>
-							<span class="menu-item" onclick="Menus.execCommand('indent')">
-								<img src="./icons/FatCow/text_indent.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Indent"/>
-							</span>
-							<span class="menu-item" onclick="Menus.execCommand('outdent')">
-								<img src="./icons/FatCow/text_indent_remove.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Unindent"/>
-							</span>
-						</li>
-					</ul>
-				</li>
-				<li class="dropdown">
-					<div class="nav-link"><img src="./icons/FatCow/text_list_bullets.png"/></div>
-					<ul class="dropdown-menu lists-dropdown-menu">
-						<li class="dropdown-item">
-							<div class="dropdown-item dropdown-header">LIST</div>
-							<span class="menu-item" onclick="Menus.execCommand('insertunorderedlist')">
-								<img src="./icons/FatCow/text_list_bullets.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Toggle On/Off"/>
-							</span>
-						</li>
-						<li class="dropdown-item list-only-dropdown-item">
-							<div class=" dropdown-header">FORMAT LIST</div>
-							<span class="menu-item" onclick="Menus.showListStyleChooser('ul', 'li')">
-								<img src="./icons/kei/kei_list_type.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Type"/>
-							</span>
-							<span class="menu-item" onclick="Menus.showFontFamilyChooser('ul', 'li')">
-								<img src="./icons/kei/kei_font_chooser.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Font Family"/>
-							</span>
-							<span class="menu-item" onclick="Menus.showFontSizeChooser('ul', 'li')">
-								<img src="./icons/kei/kei_font_size.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Font Size"/>
-							</span>
-							<span class="menu-item" onclick="Menus.showColorChooser('Font Color', 'ul', 'color', 'li')">
-								<img src="./icons/kei/kei_font_color_chooser.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Font Color"/>
-							</span>
-							<span class="menu-item" 
-								onclick="Menus.showNumericChooser('ul', 'marginBottom', 'Line Spacing', 'Pixels', 0, 10, 1, 0, 'px', 'li')">
-								<img src="./icons/FatCow/kei_list_line_spacing.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Line Spacing"/>
-							</span>
-						</li>
-					</ul>
-				</li>
-				<li class="dropdown">
-					<div class="nav-link"><img src="./icons/FatCow/table.png"/></div>
-					<ul class="dropdown-menu table-dropdown-menu">
-						<li class="dropdown-item table-insert-dropdown-item">
-							<div class="menu-item dropdown-header">INSERT TABLE</div>
-							<span class="menu-item" onclick="Menus.showTableInsert()">
-								<img src="./icons/FatCow/table_add.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Insert Table"/>
-							</span>
-						</li>
-						<li class="dropdown-item table-select-dropdown-item">
-							<div class="dropdown-item dropdown-header">SELECT</div>
-							<span class="menu-item" onclick="Menus.highlightElement('table');">
-								<img src="./icons/FatCow/kei_table_select.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Table"/>
-							</span>
-							<span class="menu-item" onclick="Menus.highlightElement('col');">
-								<img src="./icons/FatCow/kei_table_select_column.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Column"/>
-							</span>
-							<span class="menu-item" onclick="Menus.highlightElement('tr');">
-								<img src="./icons/FatCow/kei_table_select_row.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Row"/>
-							</span>
-							<span class="menu-item" onclick="Menus.highlightElement('td');">
-								<img src="./icons/FatCow/kei_table_select_cell.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Cell"/>
-							</span>
-						</li>
-					</ul>
-				</li>
-				<li class="dropdown">
-					<div class="nav-link selection-nav-link"><img src="./icons/FatCow/kei_table_selection.png"/></div>
+		<div id="sidebar" class="bg-dark" onmousemove="Menus.makeMenuReady()">
+			<div class="dropdown">
+				<div class="m-1"><img src="./icons/FatCow/kei_edit_button.png" alt="Icon"/></div>
+				<ul class="dropdown-menu edit-dropdown-menu">
+					<li class="dropdown-item">
+						<div class="dropdown-item dropdown-header">EDIT</div>
+						<span class="menu-item" onclick="Menus.execCommand('cut')">
+							<img src="./icons/FatCow/kei_cut_red.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Cut"/>
+						</span>
+						<span class="menu-item" onclick="Menus.execCommand('copy')">
+							<img src="./icons/gtk/kei_edit-copy.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Copy"/>
+						</span>
+						<span class="menu-item" onclick="Menus.execCommand('undo')">
+							<img src="./icons/FatCow/kei_undo.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Undo"/>
+						</span>
+						<span class="menu-item" onclick="Menus.execCommand('redo')">
+							<img src="./icons/FatCow/kei_redo.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Redo"/>
+						</span>
+						<span class="menu-item" onclick="Menus.showFindReplace()">
+							<img src="./icons/FatCow/kei_find.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Find and Replace"/>
+						</span>
+					</li>
+				</ul>
+			</div>
+			<div class="dropdown">
+				<div class="m-1"><img src="./icons/FatCow/kei_font.png" alt="Icon"/></div>
+				<ul class="dropdown-menu text-dropdown-menu"">
+					<li class="dropdown-item">
+						<div class="dropdown-item dropdown-header">FONT</div>
+						<span class="menu-item" onclick="Menus.showTextFontFamilyChooser()">
+							<img src="./icons/kei/kei_font_chooser.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Font Family"/>
+						</span>
+						<span class="menu-item" onclick="Menus.showTextFontSizeChooser()">
+							<img src="./icons/kei/kei_font_size.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Size"/>
+						</span>
+						<span class="menu-item" onclick="Menus.showTextColorChooser('Font Color', 'forecolor')">
+							<img src="./icons/kei/kei_font_color_chooser.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Color"/>
+						</span>				
+						<span class="menu-item" onclick="Menus.showTextColorChooser('Highlight Color', 'hilitecolor')">
+							<img src="./icons/FatCow/kei_highlighter_text.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Highlight"/>
+						</span>
+						<span class="menu-item" onclick="Menus.execCommand('removeformat')">
+							<img src="./icons/gtk/kei_edit-clear.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Clear Formatting"/>
+						</span>
+					</li>
+					<li class="dropdown-item">
+						<div class="dropdown-item dropdown-header">DECORATIONS</div>
+						<span class="menu-item" onclick="Menus.execCommand('bold')">
+							<img src="./icons/FatCow/text_bold.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Toggle Bold"/>
+						</span>
+						<span class="menu-item" onclick="Menus.execCommand('italic')">
+							<img src="./icons/FatCow/text_italic.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Toggle Italic"/>
+						</span>
+						<span class="menu-item" onclick="Menus.execCommand('underline')">
+							<img src="./icons/FatCow/text_underline.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Toggle Underline"/>
+						</span>
+						<span class="menu-item" onclick="Menus.execCommand('strikethrough')">
+							<img src="./icons/FatCow/text_strikethrough.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Toggle Strinethrough"/>
+						</span>
+						<span class="menu-item" onclick="Menus.execCommand('subscript')">
+							<img src="./icons/FatCow/text_subscript.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Subscript"/>
+						</span>
+						<span class="menu-item" onclick="Menus.execCommand('superscript')">
+							<img src="./icons/FatCow/text_superscript.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Superscript"/>
+						</span>
+					</li>
+				</ul>
+			</div>
+			<div class="dropdown">
+				<div class="m-1"><img src="./icons/FatCow/text.png" alt="Icon""/></div>
+				<ul class="dropdown-menu paragraph-dropdown-menu"">
+					<li class="dropdown-item">
+						<div class="dropdown-item dropdown-header">JUSTIFY</div>
+						<span class="menu-item" onclick="Menus.execCommand('justifyleft')">
+							<img src="./icons/FatCow/text_align_left.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Left"/>
+						</span>
+						<span class="menu-item" onclick="Menus.execCommand('justifyright')">
+							<img src="./icons/FatCow/text_align_right.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Right"/>
+						</span>
+						<span class="menu-item" onclick="Menus.execCommand('justifycenter')">
+							<img src="./icons/FatCow//text_align_center.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Center"/>
+						</span>
+						<span class="menu-item" onclick="Menus.execCommand('justifyfull')">
+						<img src="./icons/FatCow/text_align_justify.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Fill"/>
+						</span>
+					</li>
+					<li class="dropdown-item">
+						<div class="dropdown-item dropdown-header">INDENT</div>
+						<span class="menu-item" onclick="Menus.execCommand('indent')">
+							<img src="./icons/FatCow/text_indent.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Indent"/>
+						</span>
+						<span class="menu-item" onclick="Menus.execCommand('outdent')">
+							<img src="./icons/FatCow/text_indent_remove.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Unindent"/>
+						</span>
+					</li>
+				</ul>
+			</div>
+			<div class="dropdown">
+				<div class="m-1"><img src="./icons/FatCow/text_list_bullets.png"/></div>
+				<ul class="dropdown-menu lists-dropdown-menu">
+					<li class="dropdown-item">
+						<div class="dropdown-item dropdown-header">LIST</div>
+						<span class="menu-item" onclick="Menus.execCommand('insertunorderedlist')">
+							<img src="./icons/FatCow/text_list_bullets.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Toggle List On/Off"/>
+						</span>
+					</li>
+					<li class="dropdown-item list-only-dropdown-item">
+						<div class=" dropdown-header">FORMAT LIST</div>
+						<span class="menu-item" onclick="Menus.showListStyleChooser('ul', 'li')">
+							<img src="./icons/kei/kei_list_type.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Type"/>
+						</span>
+						<span class="menu-item" onclick="Menus.showFontFamilyChooser('ul', 'li')">
+							<img src="./icons/kei/kei_font_chooser.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Font Family"/>
+						</span>
+						<span class="menu-item" onclick="Menus.showFontSizeChooser('ul', 'li')">
+							<img src="./icons/kei/kei_font_size.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Font Size"/>
+						</span>
+						<span class="menu-item" onclick="Menus.showColorChooser('Font Color', 'ul', 'color', 'li')">
+							<img src="./icons/kei/kei_font_color_chooser.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Font Color"/>
+						</span>
+						<span class="menu-item" 
+							onclick="Menus.showNumericChooser('ul', 'marginBottom', 'Line Spacing', 'Pixels', 0, 10, 1, 0, 'px', 'li')">
+							<img src="./icons/FatCow/kei_list_line_spacing.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Line Spacing"/>
+						</span>
+					</li>
+				</ul>
+			</div>
+			<div class="dropdown">
+				<div class="m-1"><img src="./icons/FatCow/table.png"/></div>
+				<ul class="dropdown-menu table-dropdown-menu">
+					<li class="dropdown-item table-insert-dropdown-item">
+						<div class="menu-item dropdown-header">TABLE</div>
+						<span class="menu-item" onclick="Menus.showTableInsert()">
+							<img src="./icons/FatCow/table_add.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Insert Table"/>
+						</span>
+					</li>
+					<li class="dropdown-item table-select-dropdown-item">
+						<div class="dropdown-item dropdown-header">SELECT</div>
+						<span class="menu-item" onclick="Menus.highlightElement('table');">
+							<img src="./icons/FatCow/kei_table_select.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Table"/>
+						</span>
+						<span class="menu-item" onclick="Menus.highlightElement('col');">
+							<img src="./icons/FatCow/kei_table_select_column.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Column"/>
+						</span>
+						<span class="menu-item" onclick="Menus.highlightElement('tr');">
+							<img src="./icons/FatCow/kei_table_select_row.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Row"/>
+						</span>
+						<span class="menu-item" onclick="Menus.highlightElement('td');">
+							<img src="./icons/FatCow/kei_table_select_cell.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Cell"/>
+						</span>
+					</li>
+				</ul>
+			</div>
+			<div class="dropdown">
+				<div class="m-1"><img src="./icons/FatCow/kei_table_selection.png"/></div>
 					<ul class="dropdown-menu selection-dropdown-menu">
-						<li class="dropdown-item dropdown-header">SELECTION</li>
-						<li class="dropdown-item table-only-dropdown-item">
-							<span class="menu-item" onclick="Menus.tableDeleteElement(highlightedElementTag);">
-								<img src="./icons/FatCow/table_delete.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Delete"/>
-							</span>
-							<span class="menu-item" onclick="Menus.tableInsertLine('above');">
-								<img src="./icons/FatCow/kei_table_insert_line_above.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Insert Line Above"/>
-							</span>
-							<span class="menu-item" onclick="Menus.tableInsertLine('below');">
-								<img src="./icons/FatCow/kei_table_insert_line_below.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Insert Line Below"/>
-							</span>
-							<span class="menu-item" onclick="Menus.showColorChooser('Background Color', 'table', 'backgroundColor')">
-								<img src="./icons/FatCow/color_wheel.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Background Color"/>
-							</span>
-						</li>
-						<li class="dropdown-item column-only-dropdown-item">
-							<span class="menu-item" onclick="Menus.tableDeleteElement(highlightedElementTag);">
-								<img src="./icons/FatCow/table_delete.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Delete"/>
-							</span>
-							<span class="menu-item" onclick="Menus.tableInsertElement('col', 'left');">
-								<img src="./icons/FatCow/insert_column_left.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Insert Column Left"/>
-							</span>
-							<span class="menu-item" onclick="Menus.tableInsertElement('col', 'right');">
-								<img src="./icons/FatCow/insert_column_right.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Insert Column Right"/>
-							</span>
-							<span class="menu-item" onclick="Menus.showNumericChooser('col', 'width', 'Width', 'Pixels', 2, 40, 2, 2, 'cm', 'td')">
-								<img src="./icons/FatCow/kei_table_column_width.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Column Width"/>
-							</span>
-						</li>
-						<li class="dropdown-item row-only-dropdown-item">
-							<span class="menu-item" onclick="Menus.tableDeleteElement(highlightedElementTag);">
-								<img src="./icons/FatCow/table_delete.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Delete"/>
-							</span>
-							<span class="menu-item" onclick="Menus.tableSplit()">
-								<img src="./icons/FatCow/kei_table_split.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Split Table"/>
-							</span>
-							<span class="menu-item" onclick="Menus.tableInsertElement('tr', 'above');">
-								<img src="./icons/FatCow/kei_insert_row_above.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Insert Row Above"/>
-							</span>
-							<span class="menu-item" onclick="Menus.tableInsertElement('tr', 'below');">
-								<img src="./icons/FatCow/kei_insert_row_below.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Insert Row Below"/>
-							</span>
-							<span class="menu-item" onclick="Menus.showNumericChooser('tr', 'height', 'Height', 'Pixels', 1, 10, 1, 1, 'cm')">
-								<img src="./icons/FatCow/kei_table_row_height.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Row Height"/>
-							</span>
-						</li>
-						<li class="dropdown-item cell-only-dropdown-item">
-							<span class="menu-item" onclick="Menus.tableDeleteElement(highlightedElementTag);">
-								<img src="./icons/FatCow/table_delete.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Delete"/>
-							</span>
-							<span class="menu-item table-td-dropdown-item" onclick="Menus.tableInsertElement('td', 'left');">
-								<img src="./icons/FatCow/kei_insert_cell_left.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Insert Cell Left"/>
-							</span>
-							<span class="menu-item-item table-td-dropdown-item" onclick="Menus.tableInsertElement('td', 'right');">
-								<img src="./icons/FatCow/kei_insert_cell_right.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Insert Cell Right"/>
-							</span>
-							<span class="menu-item" onclick="Menus.showCellSpanChooser('Row Span', 'row')">
-								<img src="./icons/FatCow/kei_table_cell_row_span.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Row Span"/>
-							</span>
-							<span class="menu-item" onclick="Menus.showCellSpanChooser('Column Span', 'col')">
-								<img src="./icons/FatCow/kei_table_cell_column_span.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Column Span"/>
-							</span>
-						</li>
+					<li class="dropdown-item table-only-dropdown-item">
+						<span class="dropdown-item dropdown-header">SELECTION</span>
+						<span class="menu-item" onclick="Menus.tableDeleteElement(highlightedElementTag);">
+							<img src="./icons/FatCow/table_delete.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Delete"/>
+						</span>
+						<span class="menu-item" onclick="Menus.tableInsertLine('above');">
+							<img src="./icons/FatCow/kei_table_insert_line_above.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Insert Line Above"/>
+						</span>
+						<span class="menu-item" onclick="Menus.tableInsertLine('below');">
+							<img src="./icons/FatCow/kei_table_insert_line_below.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Insert Line Below"/>
+						</span>
+						<span class="menu-item" onclick="Menus.showColorChooser('Background Color', 'table', 'backgroundColor')">
+							<img src="./icons/FatCow/color_wheel.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Background Color"/>
+						</span>
+					</li>
+					<li class="dropdown-item column-only-dropdown-item">
+						<span class="dropdown-item dropdown-header">SELECTION</span>
+						<span class="menu-item" onclick="Menus.tableDeleteElement(highlightedElementTag);">
+							<img src="./icons/FatCow/table_delete.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Delete"/>
+						</span>
+						<span class="menu-item" onclick="Menus.tableInsertElement('col', 'left');">
+							<img src="./icons/FatCow/insert_column_left.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Insert Column Left"/>
+						</span>
+						<span class="menu-item" onclick="Menus.tableInsertElement('col', 'right');">
+							<img src="./icons/FatCow/insert_column_right.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Insert Column Right"/>
+						</span>
+						<span class="menu-item" onclick="Menus.showNumericChooser('col', 'width', 'Width', 'Pixels', 2, 40, 2, 2, 'cm', 'td')">
+							<img src="./icons/FatCow/kei_table_column_width.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Column Width"/>
+						</span>
+					</li>
+					<li class="dropdown-item row-only-dropdown-item">
+						<span class="dropdown-item dropdown-header">SELECTION</span>
+						<span class="menu-item" onclick="Menus.tableDeleteElement(highlightedElementTag);">
+							<img src="./icons/FatCow/table_delete.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Delete"/>
+						</span>
+						<span class="menu-item" onclick="Menus.tableSplit()">
+							<img src="./icons/FatCow/kei_table_split.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Split Table"/>
+						</span>
+						<span class="menu-item" onclick="Menus.tableInsertElement('tr', 'above');">
+							<img src="./icons/FatCow/kei_insert_row_above.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Insert Row Above"/>
+						</span>
+						<span class="menu-item" onclick="Menus.tableInsertElement('tr', 'below');">
+							<img src="./icons/FatCow/kei_insert_row_below.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Insert Row Below"/>
+						</span>
+						<span class="menu-item" onclick="Menus.showNumericChooser('tr', 'height', 'Height', 'Pixels', 1, 10, 1, 1, 'cm')">
+							<img src="./icons/FatCow/kei_table_row_height.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Row Height"/>
+						</span>
+					</li>
+					<li class="dropdown-item cell-only-dropdown-item">
+						<span class="dropdown-item dropdown-header">SELECTION</span>
+						<span class="menu-item" onclick="Menus.tableDeleteElement(highlightedElementTag);">
+							<img src="./icons/FatCow/table_delete.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Delete"/>
+						</span>
+						<span class="menu-item table-td-dropdown-item" onclick="Menus.tableInsertElement('td', 'left');">
+							<img src="./icons/FatCow/kei_insert_cell_left.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Insert Cell Left"/>
+						</span>
+						<span class="menu-item-item table-td-dropdown-item" onclick="Menus.tableInsertElement('td', 'right');">
+							<img src="./icons/FatCow/kei_insert_cell_right.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Insert Cell Right"/>
+						</span>
+						<span class="menu-item" onclick="Menus.showCellSpanChooser('Row Span', 'row')">
+							<img src="./icons/FatCow/kei_table_cell_row_span.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Row Span"/>
+						</span>
+						<span class="menu-item" onclick="Menus.showCellSpanChooser('Column Span', 'col')">
+							<img src="./icons/FatCow/kei_table_cell_column_span.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Column Span"/>
+						</span>
+					</li>
 
-						<li class="dropdown-item dropdown-header table-only-dropdown-item">TABLE ALIGN</li>
-						<li class="dropdown-item table-only-dropdown-item">
-							<span class="menu-item" onclick="Menus.tableJustify('left');">
-								<img src="./icons/FatCow/kei_align_table_left.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="ALign Left"/>
-							</span>
-							<span class="menu-item" onclick="Menus.tableJustify('center');">
-								<img src="./icons/FatCow/kei_align_table_center.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Align Center"/>
-							</span>
-							<span class="menu-item" onclick="Menus.tableJustify('right');">
-								<img src="./icons/FatCow/kei_align_table_right.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Aligh Right"/>
-							</span>
-						</li>
+					<li class="dropdown-item table-only-dropdown-item">
+						<div class="dropdown-item dropdown-header table-only-dropdown-item">TABLE ALIGN</div>
+						<span class="menu-item" onclick="Menus.tableJustify('left');">
+							<img src="./icons/FatCow/kei_align_table_left.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="ALign Left"/>
+						</span>
+						<span class="menu-item" onclick="Menus.tableJustify('center');">
+							<img src="./icons/FatCow/kei_align_table_center.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Align Center"/>
+						</span>
+						<span class="menu-item" onclick="Menus.tableJustify('right');">
+							<img src="./icons/FatCow/kei_align_table_right.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Aligh Right"/>
+						</span>
+					</li>
 
-						<li class="dropdown-item dropdown-header table-only-dropdown-item">TABLE BORDER</li>
-						<li class="dropdown-item table-only-dropdown-item">
-							<span class="menu-item" onclick="Menus.showNumericChooser('table', 'borderRadius', 'Border Radius', 'Pixels', 0, 15, 1, 0, 'px')">
-								<img src="./icons/kei/kei_radius.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Radius"/>
-							</span>
-							<span class="menu-item" onclick="Menus.showBorderStyleChooser('table')">
-								<img src="./icons/kei/kei_border_style.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Style"/>
-							</span>
-							<span class="menu-item" onclick="Menus.showNumericChooser('table', 'borderWidth', 'Border Width', 'Pixels', 0, 15, 1, 0, 'px')">
-								<img src="./icons/kei/kei_border_width.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Width"/>
-							</span>
-							<span class="menu-item" onclick="Menus.showColorChooser('Border Color', 'table', 'borderColor')">
-								<img src="./icons/FatCow/color_wheel.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Color"/>
-							</span>
-							<span class="menu-item" onclick="Menus.showBorderCollapseChooser('table')">
-								<img src="./icons/FatCow/kei_table_border_collapse.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Cell Collapse"/>
-							</span>
-							<span class="menu-item" onclick="Menus.showNumericChooser('table', 'borderSpacing', 'Cell Spacing', 'Pixels', 0, 15, 1, 0, 'px')">
-								<img src="./icons/FatCow/kei_table_cell_spacing.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Cell Spacing"/>
-							</span>
-						</li>
+					<li class="dropdown-item table-only-dropdown-item">
+						<div class="dropdown-item dropdown-header table-only-dropdown-item">TABLE BORDER</div>
+						<span class="menu-item" onclick="Menus.showNumericChooser('table', 'borderRadius', 'Border Radius', 'Pixels', 0, 15, 1, 0, 'px')">
+							<img src="./icons/kei/kei_radius.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Radius"/>
+						</span>
+						<span class="menu-item" onclick="Menus.showBorderStyleChooser('table')">
+							<img src="./icons/kei/kei_border_style.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Style"/>
+						</span>
+						<span class="menu-item" onclick="Menus.showNumericChooser('table', 'borderWidth', 'Border Width', 'Pixels', 0, 15, 1, 0, 'px')">
+							<img src="./icons/kei/kei_border_width.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Width"/>
+						</span>
+						<span class="menu-item" onclick="Menus.showColorChooser('Border Color', 'table', 'borderColor')">
+							<img src="./icons/FatCow/color_wheel.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Color"/>
+						</span>
+						<span class="menu-item" onclick="Menus.showBorderCollapseChooser('table')">
+							<img src="./icons/FatCow/kei_table_border_collapse.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Cell Collapse"/>
+						</span>
+						<span class="menu-item" onclick="Menus.showNumericChooser('table', 'borderSpacing', 'Cell Spacing', 'Pixels', 0, 15, 1, 0, 'px')">
+							<img src="./icons/FatCow/kei_table_cell_spacing.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Cell Spacing"/>
+						</span>
+					</li>
 
-						<li class="dropdown-item dropdown-header">CELL FORMAT</li>
-						<li class="dropdown-item">
-							<span class="menu-item" onclick="Menus.showFontFamilyChooser(highlightedElementTag, 'td')">
-								<img src="./icons/kei/kei_font_chooser.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Font Family"/>
-							</span>
-							<span class="men-uitem" onclick="Menus.showFontSizeChooser(highlightedElementTag, 'td')">
-								<img src="./icons/kei/kei_font_size.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Font Size"/>
-							</span>
-							<span class="menu-item" onclick="Menus.showColorChooser('Font Color', highlightedElementTag, 'color', 'td')">
-								<img src="./icons/kei/kei_font_color_chooser.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Font Color"/>
-							</span>
-							<span class="menu-item" onclick="Menus.showTextAlignChooser(highlightedElementTag, 'td')">
-								<img src="./icons/FatCow/kei_table_cell_horizontal_align.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Horizontal Align"/>
-							</span>
-							<span class="menu-item" onclick="Menus.showVerticalAlignChooser(highlightedElementTag, 'td')">
-								<img src="./icons/FatCow/kei_table_cell_vertical_align.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Vertical Align"/>
-							</span>
-							<span class="menu-item" onclick="Menus.showColorChooser('Background Color', highlightedElementTag, 'backgroundColor', 'td')">
-								<img src="./icons/FatCow/color_wheel.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Background Color"/>
-							</span>
-						</li>
-						<li class="dropdown-item dropdown-header">CELL BORDERS</li>
-						<li class="dropdown-item">
-							<span class="menu-item" onclick="Menus.showNumericChooser(
-								highlightedElementTag, 'borderRadius', 'Border Radius', 'Pixels', 0, 15, 1, 0, 'px', 'td')">
-								<img src="./icons/kei/kei_radius.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Radius"/>
-							</span>
-							<span class="menu-item" onclick="Menus.showBorderStyleChooser(highlightedElementTag, 'td')">
-								<img src="./icons/kei/kei_border_style.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Style"/>
-							</span>
-							<span class="menu-item" onclick="Menus.showNumericChooser(
-								highlightedElementTag, 'borderWidth', 'Border Width', 'Pixels', 0, 15, 1, 0, 'px', 'td')">
-								<img src="./icons/kei/kei_border_width.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Width"/>
-							</span>
-							<span class="menu-item" onclick="Menus.showColorChooser('Border Color', highlightedElementTag, 'borderColor', 'td')">
-								<img src="./icons/FatCow/color_wheel.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Color"/>
-							</span>
-						</li>
-					</ul>
-				</li>
-				<li class="dropdown">
-					<div class="nav-link"><img src="./icons/gtk/kei_gtk-about.png" alt="Icon"/></div>
-					<ul class="dropdown-menu edit-dropdown-menu">
-						<li class="dropdown-item">
-							<div class="dropdown-item dropdown-header">ABOUT</div>
-							<a href="https://creativecommons.org/licenses/by-nc-sa/3.0/"target="_blank">
-								<img src="./icons/kei/kei_copyright.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Terms of Use"/>
-							</a>
-							<a href="https://www.fatcow.com/free-icons"target="_blank">
-								<img src="./icons/FatCow/fatcow.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Fat Cow Icons"/>
-							</a>
-							<span class="menu-item" onclick="Menus.showMessageLinkModal('Formatting Tables', './TableFormatting.html')">
-								<img src="./icons/FatCow/table.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Formatting Tables"/>
-							</span>
-						</ul>
+					<li class="dropdown-item">
+						<div class="dropdown-item dropdown-header">CELL FORMAT</div>
+						<span class="menu-item" onclick="Menus.showFontFamilyChooser(highlightedElementTag, 'td')">
+							<img src="./icons/kei/kei_font_chooser.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Font Family"/>
+						</span>
+						<span class="men-uitem" onclick="Menus.showFontSizeChooser(highlightedElementTag, 'td')">
+							<img src="./icons/kei/kei_font_size.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Font Size"/>
+						</span>
+						<span class="menu-item" onclick="Menus.showColorChooser('Font Color', highlightedElementTag, 'color', 'td')">
+							<img src="./icons/kei/kei_font_color_chooser.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Font Color"/>
+						</span>
+						<span class="menu-item" onclick="Menus.showTextAlignChooser(highlightedElementTag, 'td')">
+							<img src="./icons/FatCow/kei_table_cell_horizontal_align.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Horizontal Align"/>
+						</span>
+						<span class="menu-item" onclick="Menus.showVerticalAlignChooser(highlightedElementTag, 'td')">
+							<img src="./icons/FatCow/kei_table_cell_vertical_align.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Vertical Align"/>
+						</span>
+						<span class="menu-item" onclick="Menus.showColorChooser('Background Color', highlightedElementTag, 'backgroundColor', 'td')">
+							<img src="./icons/FatCow/color_wheel.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Background Color"/>
+						</span>
+					</li>
+					<li class="dropdown-item">
+						<div class="dropdown-item dropdown-header">CELL BORDERS</div>
+						<span class="menu-item" onclick="Menus.showNumericChooser(
+							highlightedElementTag, 'borderRadius', 'Border Radius', 'Pixels', 0, 15, 1, 0, 'px', 'td')">
+							<img src="./icons/kei/kei_radius.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Radius"/>
+						</span>
+						<span class="menu-item" onclick="Menus.showBorderStyleChooser(highlightedElementTag, 'td')">
+							<img src="./icons/kei/kei_border_style.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Style"/>
+						</span>
+						<span class="menu-item" onclick="Menus.showNumericChooser(
+							highlightedElementTag, 'borderWidth', 'Border Width', 'Pixels', 0, 15, 1, 0, 'px', 'td')">
+							<img src="./icons/kei/kei_border_width.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Width"/>
+						</span>
+						<span class="menu-item" onclick="Menus.showColorChooser('Border Color', highlightedElementTag, 'borderColor', 'td')">
+							<img src="./icons/FatCow/color_wheel.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Color"/>
+						</span>
+					</li>
+				</ul>
+			</div>
+			<div class="dropdown">
+			<div id="keibrand"><span><br><b>Kei<BR>HTML<BR>Editor</b></span></div>
+				<ul class="dropdown-menu about-dropdown-menu">
+					<li class="dropdown-item">
+						<div class="dropdown-item dropdown-header">HELP</div>
+						<span class="menu-item" onclick="Menus.showMessageLinkModal('About', './KeiHTMLBrowser.html')">
+							<img src="./icons/gtk/kei_gtk-about.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="About"/>
+						</span>
+						<span class="menu-item" onclick="Menus.showMessageLinkModal('Formatting Tables', './TableFormatting.html')">
+							<img src="./icons/FatCow/table.png" alt="Icon" data-toggle="tooltip" data-placement="top" title="Formatting Tables"/>
+						</span>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<div id="content">
+			<div id="keieditable" contenteditable="true" onmousedown="Menus.deHighlightElement()" onkeypress="Menus.deHighlightElement()"></div>
+			<div class="modal fade" id="mutableModal" tabindex="-1" role="dialog" aria-hidden="true">
+				<div class="modal-dialog" role="document" id="mutableModalDialog">
+					<div class="modal-content bg-light">
+						<div class="modal-header">
+							<h4 class="modal-title" id="mutableModalTitle"></h4>
+							<button type="button" class="close" data-dismiss="modal">&times;</button>
+						</div>
+						<div class="modal-body" id="mutableModalBody"></div>
+						<div class="modal-footer" id="mutableModalFooter"></div>
 					</div>
-				</li>
-			</ul>
- 		</div>
-	</nav>
-
-	<div id="keieditable" contenteditable="true" onmousedown="Menus.deHighlightElement()" onkeypress="Menus.deHighlightElement()"></div>
-
-	<div class="modal fade" id="mutableModal" tabindex="-1" role="dialog" aria-hidden="true">
-		<div class="modal-dialog" role="document" id="mutableModalDialog">
-			<div class="modal-content bg-light">
-				<div class="modal-header">
-					<h4 class="modal-title" id="mutableModalTitle"></h4>
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
-				<div class="modal-body" id="mutableModalBody"></div>
-				<div class="modal-footer" id="mutableModalFooter"></div>
 			</div>
 		</div>
 	</div>
 </body>
-
-</html>
