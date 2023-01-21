@@ -6,21 +6,49 @@
 * work.  If not, see <http://creativecommons.org/licenses/by-nc-sa/3.0/>.
 */
 
-.nav {
-	cursor:default;
-}
-
+@CHARSET "UTF-8";
 
 .dropdown-header {
 	color:blue;
 	font-weight:bold;
+	padding:2px;
 }
 .dropdown-item {
 	text-align:center;
 }
-.dropdown-menu {
-	margin-left: -85px;
-	margin-top: -8px;
+.edit-dropdown-menu {
+	margin-left: 50px;
+	margin-top: -30px;
+	padding:0px;
+}
+.text-dropdown-menu {
+	margin-left: 50px;
+	margin-top: -56px;
+	padding:0px;
+}
+.paragraph-dropdown-menu {
+	margin-left: 50px;
+	margin-top: -56px;
+	padding:0px;
+}
+.lists-dropdown-menu {
+	margin-left: 50px;
+	margin-top: -56px;
+	padding:0px;
+}
+.table-dropdown-menu {
+	margin-left: 50px;
+	margin-top: -56px;
+	padding:0px;
+}
+.selection-dropdown-menu {
+	margin-left: 50px;
+	margin-top: -215px;
+	padding:0px;
+}
+.about-dropdown-menu {
+	margin-left: 50px;
+	margin-top: -70px;
 	padding:0px;
 }
 .dropdown:hover>.dropdown-menu {
@@ -89,12 +117,37 @@
 	width: 100%;
 }
 
+#viewport {
+  padding-left: 50px;
+}
+
+#content {
+  margin-right: 0;
+  position: relative;
+  width: 100%;
+}
+
+#sidebar {
+  height: 100%;
+  left: 50px;
+  margin-left: -50px;
+  margin-top: -1%;
+  overflow-y: visible;
+  position: fixed;
+  text-align:center;
+  width: 50px;
+  z-index: 1000;
+}
+
+#keibrand {
+  color:white;
+  font-size:14px;
+}
+
 #keieditable {
 	border:solid 3px #d3d3d3;
-	margin-left:1%;
-	margin-right:1%;
-	margin-top:100px;
+	margin:1%;
 	min-height:20rem;
-	padding:10px;
+	padding:1%;
 	width: auto;
 }
