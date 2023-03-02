@@ -80,18 +80,18 @@ class Edit {
 	static selectRangeInNode(node, startOffset, endOffset) {
 	    Edit.selectRange(Edit.getRangeInNode(node, startOffset, endOffset));
 	}
-//	static setCaretAfterNode(node) {			//These probably work but I haven't tested them yet
-//	    var range = document.createRange();
-//	    range.setStartAfter(node);
-//	    range.setEndAfter(node);
-//	    Edit.selectRange(range);
-//	}
-//	static setCaretBeforeNode(node) {
-//	    var range = document.createRange();
-//	    range.setStartBefore(node);
-//	    range.setEndBefore(node);
-//	    Edit.selectRange(range);
-//	}
+	static setCaretAfterNode(node) {
+	    var range = document.createRange();
+	    range.setStartAfter(node);
+	    range.setEndAfter(node);
+	    Edit.selectRange(range);
+	}
+	static setCaretBeforeNode(node) {
+	    var range = document.createRange();
+	    range.setStartBefore(node);
+	    range.setEndBefore(node);
+	    Edit.selectRange(range);
+	}
 
 // All editing commands are routed through the execCommand function.
 	static execCommand(action, value) {
@@ -209,7 +209,11 @@ class Edit {
 		}
 		if (replacement.tagName.toLowerCase() == 'table') Edit.sanitizeTable(replacement); // Edit.sanitizeTable(table) call
 
-		if (['ol','ul'].includes(element.tagName.toLowerCase())) Edit.selectDeleteAndReplaceNode(element, replacement);
+		if (['ol','ul'].includes(element.tagName.toLowerCase())) {
+			Edit.setCaretAfterNode(element);
+			Edit.insertHTML('<br>');				// Kludge to ensure that the list does not absorb the block element that follows
+			Edit.selectDeleteAndReplaceNode(element, replacement);
+		}
 		else Edit.selectAndReplaceNode(element, replacement);
 	}
 }

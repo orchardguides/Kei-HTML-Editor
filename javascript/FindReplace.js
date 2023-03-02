@@ -101,17 +101,20 @@ class FindReplace {
 		if (findReplace.find()) {
 			document.getElementById('mutableModalBody').innerHTML = 
 				`<div>
-					<div class="row">
-						<span class="col-sm-5">Find</span>
-						<span class="col-sm-7">` + findReplace.target + `</span>
+					<div class="row m-1">
+						<span class="col-12 text-primary text-center">Find</span>
 					</div>
-					<div class="row">
-						<span class="col-sm-5";>Replace With</span>
-						<span class="col-sm-7">` + findReplace.replacement + `</span>
+					<div class="row m-1">
+						<span class="col-12">` + findReplace.target + `</span>
 					</div>
-					<div class="row">
-						<span class="col-sm-5">Match Case</span>
-						<span class="col-sm-7">` + ((findReplace.matchCase) ? 'Yes' : 'No') + `</span>
+					<div class="row m-1">
+						<span class="col-12 text-primary text-center">Replace With</span>
+					</div>
+					<div class="row m-1">
+						<span class="col-12">` + findReplace.replacement + `</span>
+					</div>
+					<div class="row m-1">
+						<span class="col-12 text-primary text-center">` + ((findReplace.matchCase) ? 'Match Case' : 'Case Insensitive') + `</span>
 					</div>
 			 	</div>`;
 			document.getElementById('mutableModalFooter').innerHTML = "";
@@ -140,12 +143,14 @@ class FindReplace {
 	static finishFindReplace() {
 		document.getElementById('mutableModalBody').innerHTML = 
 			`<div>
-				<div class="row">
-					<label class="col-sm-5">Find</label>
-					<label class="col-sm-7">` + findReplace.target + `</label>
+				<div class="row m-1">
+					<label class="col-12 text-primary text-center">Find</label>
+					</div>
+					<div class="row m-1">
+					<label class="col-12">` + findReplace.target + `</label>
 				</div>
-				<div class="row">
-					<h6 class="col-sm-12" style="text-align:center">No More Matches</h6>
+				<div class="row m-1">
+					<h6 class="col-12 text-primary text-center">No More Matches</h6>
 				</div>
 			 </div>`;
 		document.getElementById('mutableModalFooter').innerHTML = "";

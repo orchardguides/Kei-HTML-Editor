@@ -41,61 +41,56 @@ class Menus {
 			if (highlightedElementTag) {
 				$(".edit-dropdown-menu").addClass("invisible");
 				$(".text-dropdown-menu").addClass("invisible");
-				$(".lists-dropdown-menu").addClass("invisible");
+				$(".list-dropdown-menu").addClass("invisible");
 				$(".selection-dropdown-menu").removeClass("invisible");
 			} else {
 				$(".edit-dropdown-menu").removeClass("invisible");
 				$(".text-dropdown-menu").removeClass("invisible");
-				$(".lists-dropdown-menu").removeClass("invisible");
+				$(".list-dropdown-menu").removeClass("invisible");
 				$(".selection-dropdown-menu").addClass("invisible");
 			}
-
-			if (Edit.isCaretInsideTags(["ol", "ul"])) {
-				$(".list-only-dropdown-item").removeClass("d-none");
-				$(".list-only-menu-item").removeClass("d-none");
-			} else {
-				$(".list-only-dropdown-item").addClass("d-none");
-				$(".list-only-menu-item").addClass("d-none");
-			}
-
 			if ((Edit.isCaretInsideTags(["ol", "ul"])) || (highlightedElementTag)) {
 				$(".paragraph-dropdown-menu").addClass("invisible");
-				$(".table-insert-dropdown-item").addClass("d-none");
 			} else {
-				$(".table-insert-dropdown-item").removeClass("d-none");
 				$(".paragraph-dropdown-menu").removeClass("invisible");
 			}
+			if ((Edit.isCaretInsideTags(["ol", "ul"])) && ((Edit.isCaretInsideTag("table") == false))) {
+				$(".table-dropdown-menu").addClass("invisible");
+			} else {
+				$(".table-dropdown-menu").removeClass("invisible");
+			}
 
-			if (Edit.isCaretInsideTags(["table","ol", "ul"])) {
+			if ((Edit.isCaretInsideTags(["table", "ol", "ul"])) || (highlightedElementTag)) {
 				$(".table-insert-dropdown-item").addClass("d-none");
 			} else {
 				$(".table-insert-dropdown-item").removeClass("d-none");
 			}
-
 			if (Edit.isCaretInsideTag("table")) {
 				$(".table-select-dropdown-item").removeClass("d-none");
 			} else {
 				$(".table-select-dropdown-item").addClass("d-none");
 			}
 
+			if (Edit.isCaretInsideTags(["ol", "ul"])) {
+				$(".list-only-dropdown-item").removeClass("d-none");
+			} else {
+				$(".list-only-dropdown-item").addClass("d-none");
+			}
 			if (highlightedElementTag == 'table') {
 				$(".table-only-dropdown-item").removeClass("d-none");
 			} else {
 				$(".table-only-dropdown-item").addClass("d-none");
 			}
-
 			if (highlightedElementTag == 'col') {
 				$(".column-only-dropdown-item").removeClass("d-none");
 			} else {
 				$(".column-only-dropdown-item").addClass("d-none");
 			}
-
 			if (highlightedElementTag == 'tr') {
 				$(".row-only-dropdown-item").removeClass("d-none");
 			} else {
 				$(".row-only-dropdown-item").addClass("d-none");
 			}
-
 			if (highlightedElementTag == 'td') {
 				$(".cell-only-dropdown-item").removeClass("d-none");
 			} else {
@@ -195,7 +190,6 @@ class Menus {
 		$('#mutableModal').modal("show");
 		Edit.selectRange(selection);
 	}
-
 	static modalButtonNoDismiss(text, onclick) {
 		let button = document.createElement("button");
 		button.className = "btn btn-primary btn-sm";
@@ -208,16 +202,15 @@ class Menus {
 		button.setAttribute("data-dismiss", "modal");
 		return button;
 	}
-
 	static modalNumericSelect(labelText, id, min, max, step, selected, units) {
 		let div = document.createElement("div");
 		div.className = "row";
 		let label = document.createElement("label");
-		label.className = "col-sm-8";
+		label.className = "col-8";
 		label.innerHTML = labelText;
 		div.appendChild(label);
 		let select = document.createElement("select");
-		select.className = "col-sm-4 custom-select";
+		select.className = "col-4 custom-select";
 		select.id = id;
 		div.appendChild(select);
 		for (let value=min; value<=max; value=value+step) {
@@ -260,7 +253,7 @@ class Menus {
 		let chosenStyleRow = styleTable.insertRow(-1);
 		let chosenStyleCell = chosenStyleRow.insertCell(-1);
 		chosenStyleCell.setAttribute("Id", "chosenStyleCell");
-		chosenStyleCell.className = "chosen-style";
+		chosenStyleCell.className = "style-chosen";
 		document.getElementById('mutableModalBody').innerHTML = styleTable.outerHTML;
 
 		document.getElementById('mutableModalFooter').innerHTML = "";
@@ -390,7 +383,7 @@ class Menus {
 		let chosenStyleRow = colorTable.insertRow(-1);
 		let chosenColorCell = chosenStyleRow.insertCell(-1);
 		chosenColorCell.setAttribute("Id", "chosenColorCell");
-		chosenColorCell.className = "chosen-color";
+		chosenColorCell.className = "color-chosen";
 		document.getElementById('mutableModalBody').innerHTML = colorTable.outerHTML;
 
 		document.getElementById('mutableModalFooter').innerHTML = "";
@@ -448,27 +441,29 @@ class Menus {
 		document.getElementById('mutableModalTitle').innerHTML = "Find & Replace";
 		document.getElementById('mutableModalBody').innerHTML = 
 			`<div>
-				<div class="row mb-1 mr-1">
-					<label class="col-sm-4">Find</label>
-					<input type="text" id="target" class="col-sm-8 pl-1"></input>
+				<div class="row m-1">
+					<span class="col-12 text-primary text-center">Find</span>
 				</div>
-				<div class="row mb-1 mr-1">
-					<label class="col-sm-4";>Replace</label>
-					<input type="text" id="replacement" class="col-sm-8 pl-1"></input>
+				<div class="row m-1">
+					<input type="text" id="target" class="col-12"></input>
 				</div>
-				<div class="row mr-1">
-					<label class="col-sm-4"></label>
-					<input type="checkbox" id="matchCase" class="col-sm-1"></input>
-					<label class="col-sm-7">Match Case</label>
+				<div class="row m-1">
+					<span class="col-12 text-primary text-center">Replace</span>
+				</div>
+				<div class="row m-1">
+					<input type="text" id="replacement" class="col-12"></input>
+				</div>
+				<div class="row mt-2 mr-1 mb-1 ml-1">
+					<input type="checkbox" id="matchCase" class="col-1"></input>
+					<span class="col-7 text-primary text-center">Match Case</span>
 				</div>
 			 </div>`;
-
 		document.getElementById('mutableModalFooter').innerHTML = "";
 		document.getElementById('mutableModalFooter').appendChild(Menus.modalButtonNoDismiss("Find",  "FindReplace.initializeFindReplace()"));
 		Menus.mutableModalShow();
 	}
 
-	static showMessageLinkModal(title, link) {
+	static showMessageInLinkModal(title, link) {
 		document.getElementById('mutableModalTitle').innerHTML = title;
 		document.getElementById('mutableModalBody').innerHTML = "<embed type='text/html' src='" + link + "'>";
 		document.getElementById('mutableModalFooter').innerHTML = "";
