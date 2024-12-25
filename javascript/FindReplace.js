@@ -90,11 +90,55 @@ class FindReplace {
 		return Edit.getRangeInNode(textNodes[this.nodeIndex], this.startOffset, this.endOffset);
 	}
 
-	static initializeFindReplace() {
+	findNext() {
+		if (this.find()) {
+			selection = this.getSelection();
+			Menus.mutableModalShow();
+		}  else FindReplace.finish();
+	}
+	replaceAndNext() {
+		this.replace();
+		this.findNext();
+	}
+	replaceAllAndFinish() {
+			this.replaceAll();
+			FindReplace.finish();
+	}
+
+	static initialize() {
+		document.getElementById('mutableModalTitle').innerHTML = "Find & Replace";
+		document.getElementById('mutableModalBody').innerHTML = 
+			`<div>
+				<div class="row m-1">
+					<span class="col-12 text-primary text-center">Find</span>
+				</div>
+				<div class="row m-1">
+					<input type="text" id="target" class="col-12"></input>
+				</div>
+				<div class="row m-1">
+					<span class="col-12 text-primary text-center">Replace</span>
+				</div>
+				<div class="row m-1">
+					<input type="text" id="replacement" class="col-12"></input>
+				</div>
+				<div class="row mt-2 mr-1 mb-1 ml-1">
+					<input type="checkbox" id="matchCase" class="col-1"></input>
+					<span class="col-7 text-primary text-center">Match Case</span>
+				</div>
+			 </div>`;
+		document.getElementById('mutableModalFooter').innerHTML = "";
+		document.getElementById('mutableModalFooter').appendChild(Menus.modalButtonNoDismiss("Find",  "FindReplace.continue()"));
+		Menus.mutableModalShow();
+	}
+
+// In their code and modal button calls, continue() and finish() reference a global FindReplace instance 
+// which must be named 'findReplace'
+	static continue() {
 		if (document.getElementById("target").value == "") {
 			$('#mutableModal').modal("hide");
 			return;
 		}
+
 		findReplace = new FindReplace(document.getElementById("target").value, 
 											document.getElementById("replacement").value, 
 											document.getElementById("matchCase").checked);
@@ -118,29 +162,15 @@ class FindReplace {
 					</div>
 			 	</div>`;
 			document.getElementById('mutableModalFooter').innerHTML = "";
-			document.getElementById('mutableModalFooter').appendChild(Menus.modalButtonNoDismiss("Replace",  "FindReplace.replace()"));
-			document.getElementById('mutableModalFooter').appendChild(Menus.modalButtonNoDismiss("Replace All",  "FindReplace.replaceAll()"));
-			document.getElementById('mutableModalFooter').appendChild(Menus.modalButtonNoDismiss("Find Next",  "FindReplace.find()"));
+			document.getElementById('mutableModalFooter').appendChild(Menus.modalButtonNoDismiss("Replace",  "findReplace.replaceAndNext()"));
+			document.getElementById('mutableModalFooter').appendChild(Menus.modalButtonNoDismiss("Replace All",  "findReplace.replaceAllAndFinish()"));
+			document.getElementById('mutableModalFooter').appendChild(Menus.modalButtonNoDismiss("Find Next",  "findReplace.findNext()"));
 
 			selection = findReplace.getSelection();
 			Menus.mutableModalShow();
-		} else FindReplace.finishFindReplace(); 
+		} else FindReplace.finish(); 
 	}
-	static find() {
-		if (findReplace.find()) {
-			selection = findReplace.getSelection();
-			Menus.mutableModalShow();
-		}  else FindReplace.finishFindReplace();
-	}
-	static replace() {
-		findReplace.replace();
-		FindReplace.find();
-	}
-	static replaceAll() {
-			findReplace.replaceAll();
-			FindReplace.finishFindReplace();
-	}
-	static finishFindReplace() {
+	static finish() {
 		document.getElementById('mutableModalBody').innerHTML = 
 			`<div>
 				<div class="row m-1">

@@ -8,20 +8,64 @@
 
 'use strict';
 
-// Uses Edit.js, FindReplace.js, Style.js, and Table.js
+// Uses Edit.js, FindReplace.js, SpellCheck.js, Style.js, Table.js, and typo.js
 
 var selection;  				// Global Variable to persist selection in document across mouse click and other events
-var findReplace;				// Global Variable to enable find and replace functions
+var findReplace;				// Global Variable to enable find and replace functions (MUST be named 'findReplace')
+var typo;						// Global Variable to enable spellcheck (MUST be named 'typo')
+var spellCheck;					// Global Variable to enable spellcheck (MUST be named 'spellCheck')
 var	highlightedElementTag		// Global Variable to facilitate highlighting selected elements
 var highlightedChildIndex		// Global Variable to facilitate highlighting selected elements
 var highlightedParent			// Global Variable to facilitate highlighting selected elements
 
 window.onload = function() {
-	document.execCommand('styleWithCSS', false, true);
+	Edit.execCommand('styleWithCSS', true);
 	Edit.focusInContentEditable();
 }
-$(function () {
-  $('[data-toggle="tooltip"]').tooltip();
+
+// Accelerator keys not implemented in pywebview
+
+document.addEventListener('keydown', function(event) {
+	if (event.ctrlKey && ["A","a"].includes(event.key)) {
+		event.preventDefault();
+		Edit.execCommand('selectall');
+		return;
+	}
+	if (event.ctrlKey && ["O","o"].includes(event.key)) {
+		event.preventDefault();
+		pywebview.api.open_file_dialog();
+		return;
+	}
+	if (event.ctrlKey && ["S","s"].includes(event.key)) {
+		event.preventDefault();
+		pywebview.api.save_file_dialog();
+		return;
+	}
+	if (event.ctrlKey  &&  event.shiftKey  &&  ["S","s"].includes(event.key)) {
+		event.preventDefault();
+		pywebview.api.save_file_dialog();
+		return;
+	}
+	if ((event.key == "Delete") || (event.ctrlKey && ["X","x"].includes(event.key))) {
+		event.preventDefault();
+	    Edit.execCut();
+		return;
+	}
+	if ((event.key == "Paste") || (event.ctrlKey && ["V","v"].includes(event.key))) {
+		event.preventDefault();
+	    Edit.execPaste();
+		return;
+	}
+	if (event.ctrlKey  &&  event.shiftKey  &&  ["Z","z"].includes(event.key)) {
+		event.preventDefault();
+		Edit.execCommand('redo');
+		return;
+	}
+	if (event.ctrlKey && ["Z","z"].includes(event.key)) {
+		event.preventDefault();
+		Edit.execCommand('undo');
+		return;
+	}
 });
 
 //Collection of static functions to create common Bootstrap menus
@@ -100,9 +144,9 @@ class Menus {
 	}
 
 //	Static functions to highlight and dehighlight selected elements
-	static highlightElement(tag) {
+	static highlightTableElement(tag) {
 		Edit.selectRange(selection);
-		Menus.deHighlightElement();
+		Menus.deHighlightTableElement();
 		highlightedElementTag = tag;
 		highlightedChildIndex = Edit.getNodeIndexInDocument(Edit.getTagNodeAboveCaret('td'));
 		highlightedParent = (Edit.getTagNodeAboveCaret('table'));
@@ -111,7 +155,7 @@ class Menus {
 		else Style.elementStyle(tag, ['backgroundColor', 'color'], ['highlight', 'white'], 'td');
 		Edit.putCaretInIndexedNode(highlightedChildIndex);
 	}
-	static deHighlightElement() {
+	static deHighlightTableElement() {
 		if (highlightedParent) {
 			Edit.selectRange(selection);
 			Edit.execCommand('undo');
@@ -124,58 +168,57 @@ class Menus {
 	}
 
 //  Static functions to execute editing commands
-	static execCommand(action, value) {
-		Menus.deHighlightElement();
-		Edit.selectRange(selection);
+	static selectAndExecCommand(action, value) {
+		Edit.selectRange(selection);		
 		Edit.execCommand(action, value);
 	}
+
+	static dehighlightAndSelect() {
+		Menus.deHighlightTableElement();
+		Edit.selectRange(selection);		
+	}
 	static elementStyle(tag, style, value, childGroupTag) {
-		Menus.deHighlightElement();
-		Edit.selectRange(selection);
+		Menus.dehighlightAndSelect();
 		Style.elementStyle(tag, style, value, childGroupTag);
 	}
 	static tableDeleteElement(tag) {
-		Menus.deHighlightElement();
-		Edit.selectRange(selection);
+		Menus.dehighlightAndSelect();
 		Table.deleteElement(tag);
 	}
 	static tableJustify(alignment) {
-		Menus.deHighlightElement();
-		Edit.selectRange(selection);
+		Menus.dehighlightAndSelect();
 		Table.justify(alignment);
 	}
 	static tableInsert(columns, rows, width) {
-		Menus.deHighlightElement();
-		Edit.selectRange(selection);
+		Menus.dehighlightAndSelect();
 		Table.insert(columns, rows, width);
 	}
 	static tableSplit() {
-		Menus.deHighlightElement();
-		Edit.selectRange(selection);
+		Menus.dehighlightAndSelect();
 		Table.split();
 	}
 	static tableInsertElement(tag, position) {
-		Menus.deHighlightElement();
-		Edit.selectRange(selection);
+		Menus.dehighlightAndSelect();
 		Table.insertElement(tag, position);
 	}
 	static tableCellSpan(rowOrCol, span) {
-		Menus.deHighlightElement();
-		Edit.selectRange(selection);
+		Menus.dehighlightAndSelect();
 		Table.cellSpan(rowOrCol, span);
 	}
 	static tableInsertLine(aboveBelow) {
-		Menus.deHighlightElement();
-		Edit.selectRange(selection);
+		Menus.dehighlightAndSelect();
 		Table.insertLine(aboveBelow);
 	}
 
-
+	static toggleList() {
+		Edit.trimTagFromSelection('table');
+		Edit.execCommand('insertunorderedlist');
+	}
 //  Static function to format editing commands for use as onclick functions
 	static constantOnclickStyle(tag, style, value, childGroupTag) {
 		if (childGroupTag) return "Menus.elementStyle('" + tag + "', '" + style +  "',  " + value + ", '" + childGroupTag + "');";
 		if (tag) return "Menus.elementStyle('" + tag + "', '" + style +  "', " +  value + ");"
-		return  "Edit.execCommand('" + style + "',  " + value + ");"
+		return  "Menus.selectAndExecCommand('" + style + "',  " + value + ");"
 	}
 
 	static mutableModalShow() {
@@ -266,11 +309,11 @@ class Menus {
 	}
 
 	static fontNames() {
-		return ["Arial", "Arial Black", "Brush Script MT", "Calibri", "Comic Sans MS", "Lucida Console", "Times New Roman"];
+		return ["Arial", "Arial Black", "Brush Script MT", "Calibri", "Comic Sans MS", "Lucinda Console", "Times New Roman"];
 	}
 	static fontFamilies() {
 		return ["Arial, Helvetica, sans-serif", "Arial Black, Gadget, sans-serif", "Brush Script MT, Purisa, cursive, san-serif", 
-				"Calibri, Georgia, serif", "Comic Sans MS, cursive, sans-serif", "Times New Roman, Times, serif"];
+				"Calibri, Georgia, serif", "Comic Sans MS, cursive, sans-serif", "Lucinda Console, Monaco, monospace", "Times New Roman, Times, serif"];
 	}
 	static showFontFamilyChooser(tag, childGroupTag) {
 		let style = "fontFamily";
@@ -438,29 +481,14 @@ class Menus {
 	}
 
 	static showFindReplace() {
-		document.getElementById('mutableModalTitle').innerHTML = "Find & Replace";
-		document.getElementById('mutableModalBody').innerHTML = 
-			`<div>
-				<div class="row m-1">
-					<span class="col-12 text-primary text-center">Find</span>
-				</div>
-				<div class="row m-1">
-					<input type="text" id="target" class="col-12"></input>
-				</div>
-				<div class="row m-1">
-					<span class="col-12 text-primary text-center">Replace</span>
-				</div>
-				<div class="row m-1">
-					<input type="text" id="replacement" class="col-12"></input>
-				</div>
-				<div class="row mt-2 mr-1 mb-1 ml-1">
-					<input type="checkbox" id="matchCase" class="col-1"></input>
-					<span class="col-7 text-primary text-center">Match Case</span>
-				</div>
-			 </div>`;
-		document.getElementById('mutableModalFooter').innerHTML = "";
-		document.getElementById('mutableModalFooter').appendChild(Menus.modalButtonNoDismiss("Find",  "FindReplace.initializeFindReplace()"));
-		Menus.mutableModalShow();
+		FindReplace.initialize();
+	}
+
+	static showSpellCheck() {
+		spellCheck.initialize();
+	}
+	static resetIgnoreWords() {
+		spellCheck.resetIgnoreWords();
 	}
 
 	static showMessageInLinkModal(title, link) {
@@ -471,3 +499,8 @@ class Menus {
 		Menus.mutableModalShow();
 	}
 }
+
+//Spell Check Initialization
+
+typo = new Typo('en_US', affData, wordsData, {}); //affData and wordsData dictionaries are loaded as separate files
+spellCheck = new SpellCheck(typo);

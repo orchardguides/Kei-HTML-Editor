@@ -58,8 +58,23 @@ class Edit {
 		while (textNode = treeWalker.nextNode()) textNodes.push(textNode);
 		return textNodes;
 	}
+	static getFirstLeaf(node) {
+		if (node.firstChild) return Edit.getFirstLeaf(node.firstChild);
+		else return node;
+	}
+	static getLastLeaf(node) {
+		if (node.lastChild) return Edit.getLastLeaf(node.lastChild);
+		else return node;
+	}
 
-// HTML selection functions
+	static getNextNode(node) {
+    	if (node.firstChild) return node.firstChild;
+    	while (node) {
+        	if (node.nextSibling) return node.nextSibling;
+        	node = node.parentNode;
+    	}
+	}
+
 	static selectRange(range) {
 	    var selection = window.getSelection();
 	    selection.removeAllRanges();
@@ -98,6 +113,9 @@ class Edit {
 		document.execCommand(action, false, value);    //Only place where changes to the Document occur
 		Edit.focusInContentEditable();
 	}
+//	static execCommandWithoutCrossingBlock(action, value) {
+//		Edit.execCommand(action, value);
+//	}
 	static insertHTML(html) {
 		Edit.execCommand('insertHTML', html);
 	}
@@ -125,6 +143,10 @@ class Edit {
 		while (node) 
 			if ((node.tagName) && (node.tagName.toLowerCase() == tag.toLowerCase())) return node;
 			else node = node.parentElement;
+	}
+	static getTagsNodeAboveNode(node, tagArray) {
+		let ancestor;
+		for (let tag of tagArray) if (ancestor = Edit.getTagNodeAboveNode(node, tag)) return ancestor;
 	}
 	static getTagNodeAboveCaret(tag) {
 		var node = window.getSelection().getRangeAt(0).startContainer;
@@ -179,10 +201,60 @@ class Edit {
 		if (Edit.getParentWithAttributeAboveCaret(attribute, logicalOperator, value)) return true;
 		else return false;
 	}
-	
+
+// Functions to prevent document changes from crossing into other block elements
+	static execCut() {
+	    var range = window.getSelection().getRangeAt(0);
+	    if (range == undefined) return;
+
+	    var startParent = Edit.getTagsNodeAboveNode(range.startContainer, ['table', 'ol', 'ul']);
+	    var endParent = Edit.getTagsNodeAboveNode(range.endContainer, ['table', 'ol', 'ul']);
+	    if (startParent == endParent) { //Also handles when both are undefined
+			Edit.execCommand('cut');
+			return;
+		}
+		if (endParent) {
+			let endParentRange = document.createRange();
+			endParentRange.setStartBefore(Edit.getFirstLeaf(endParent));
+	    	endParentRange.setEnd(range.endContainer, range.endOffset);
+			Edit.selectRange(endParentRange);			
+			Edit.execCommand('cut');
+		}
+		let beforeBetweenRange = document.createRange();
+		if (startParent) beforeBetweenRange.setStartAfter(startParent);
+		else beforeBetweenRange.setStart(range.startContainer, range.startOffset);
+		if (endParent) beforeBetweenRange.setEndBefore(endParent);
+		else beforeBetweenRange.setEnd(range.endContainer, range.endOffset);
+		Edit.selectRange(beforeBetweenRange);
+		Edit.execCommand('cut');
+		if ((startParent) && (endParent)) Edit.insertHTML('<br>');
+
+		if (startParent == undefined) return;
+
+		let startParentRange = document.createRange();
+		startParentRange.setStart(range.startContainer, range.startOffset);
+		startParentRange.setEndAfter(Edit.getLastLeaf(startParent));
+		Edit.selectRange(startParentRange);
+		Edit.execCommand('cut');
+	}
+
+	static execPaste() {
+		Edit.execCommand('paste');
+	}
+
+	static trimTagFromSelection(tag) {
+	    var range = window.getSelection().getRangeAt(0);
+	    var startParent = Edit.getTagNodeAboveNode(range.startContainer, tag);
+	    var endParent = Edit.getTagNodeAboveNode(range.endContainer, tag);
+		if (startParent == endParent) return;
+		if (startParent) range.setStartAfter(startParent);
+		if (endParent) range.setEndBefore(endParent);
+		Edit.selectRange(range);
+	}
+
 // Function to tame unruly tables created by other word processors. In this editor, width and and other column styles are 
 // handled exclusively at the cell level. Allowing these styles to be managed by (1) the table itself, (2) at the col level, 
-// and (3) at the cell level creates more dependencies than can be handled by a simple editor of this type. Total table
+// or (3) at the cell level creates more dependencies than can be handled by a simple editor of this type. Total table
 // width is simply the sum of widths of the cells in the widest table row.
 	static sanitizeTable(table) {
 		var colgroups = table.getElementsByTagName('colgroup');
